@@ -1,16 +1,15 @@
-import subprocess
-import shutil
-from concurrent.futures import ThreadPoolExecutor
+import sys
+import numpy as np
+from ppo import ppo_run
 
-def test_ppo_lambda(env, gae_lambda, seed):
-    terminal_size = shutil.get_terminal_size().columns
-    print(fr"PPO env: {env} seed: {seed} lambda: {gae_lambda}".center(terminal_size,'-'))
-    subprocess.run(
-        fr"python ppo.py --track --seed {seed} --gae_lambda {gae_lambda} --env-id {env} --total-timesteps 100000",
-        shell=True,
-        check=True
-    )
 
+lambdas = [0.95]  # example with more than one lambda
+seeds = np.arange(0,5,1)
 env = "CartPole-v1"
 
-test_ppo_lambda(env,0.95,0)
+# Create all combinations of lambda and seed
+combinations = [(gae_lambda, seed) for gae_lambda in lambdas for seed in seeds]
+i = int(sys.argv[1])
+gae_lambda, seed = combinations[i]
+
+ppo_run(env,gae_lambda=gae_lambda,seed=seed)
