@@ -13,4 +13,9 @@ i = int(sys.argv[1])
 gae_lambda, seed = combinations[i]
 
 seed = int(seed)
-ppo_run(env_id=env,gae_lambda=gae_lambda,seed=seed)
+
+ppo_run(
+    env_id=env,
+    gae_lambda=gae_lambda,seed=seed, 
+    total_timesteps=500_000
+)
