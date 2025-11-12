@@ -12,4 +12,5 @@ combinations = [(gae_lambda, seed) for gae_lambda in lambdas for seed in seeds]
 i = int(sys.argv[1])
 gae_lambda, seed = combinations[i]
 
+seed = int(seed)
 ppo_run(env_id=env,gae_lambda=gae_lambda,seed=seed)
