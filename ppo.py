@@ -340,46 +340,72 @@ def ppo_run(
         target_kl = 0.03,
         ):
     
-    args = {}
-    args['exp_name'] = exp_name
-    args['seed'] = seed
-    args['torch_deterministic'] = torch_deterministic
-    args['cuda'] = cuda
-    args['track'] = track
-    args['wandb_project_name'] = wandb_project_name
-    args['wandb_entity'] = wandb_entity
-    args['capture_video'] = capture_video
-    args['env_id'] = env_id
-    args['total_timesteps'] = total_timesteps
-    args['learning_rate'] = learning_rate
-    args['num_envs'] = num_envs
-    args['num_steps'] = num_steps
-    args['anneal_lr'] = anneal_lr
-    args['gamma'] = gamma
-    args['gae_lambda'] = gae_lambda
-    args['num_minibatches'] = num_minibatches
-    args['update_epochs'] = update_epochs
-    args['norm_adv'] = norm_adv
-    args['clip_coef'] = clip_coef
-    args['clip_vloss'] = clip_vloss
-    args['ent_coef'] = ent_coef
-    args['vf_coef'] = vf_coef
-    args['max_grad_norm'] = max_grad_norm
-    args['target_kl'] = target_kl
+    # args = {}
+    # args['exp_name'] = exp_name
+    # args['seed'] = seed
+    # args['torch_deterministic'] = torch_deterministic
+    # args['cuda'] = cuda
+    # args['track'] = track
+    # args['wandb_project_name'] = wandb_project_name
+    # args['wandb_entity'] = wandb_entity
+    # args['capture_video'] = capture_video
+    # args['env_id'] = env_id
+    # args['total_timesteps'] = total_timesteps
+    # args['learning_rate'] = learning_rate
+    # args['num_envs'] = num_envs
+    # args['num_steps'] = num_steps
+    # args['anneal_lr'] = anneal_lr
+    # args['gamma'] = gamma
+    # args['gae_lambda'] = gae_lambda
+    # args['num_minibatches'] = num_minibatches
+    # args['update_epochs'] = update_epochs
+    # args['norm_adv'] = norm_adv
+    # args['clip_coef'] = clip_coef
+    # args['clip_vloss'] = clip_vloss
+    # args['ent_coef'] = ent_coef
+    # args['vf_coef'] = vf_coef
+    # args['max_grad_norm'] = max_grad_norm
+    # args['target_kl'] = target_kl
+    args = tyro.cli(Args)
+    args.exp_name = exp_name
+    args.seed = seed
+    args.torch_deterministic = torch_deterministic
+    args.cuda = cuda
+    args.track = track
+    args.wandb_project_name = wandb_project_name
+    args.wandb_entity = wandb_entity
+    args.capture_video = capture_video
+    args.env_id = env_id
+    args.total_timesteps = total_timesteps
+    args.learning_rate = learning_rate
+    args.num_envs = num_envs
+    args.num_steps = num_steps
+    args.anneal_lr = anneal_lr
+    args.gamma = gamma
+    args.gae_lambda = gae_lambda
+    args.num_minibatches = num_minibatches
+    args.update_epochs = update_epochs
+    args.norm_adv = norm_adv
+    args.clip_coef = clip_coef
+    args.clip_vloss = clip_vloss
+    args.ent_coef = ent_coef
+    args.vf_coef = vf_coef
+    args.max_grad_norm = max_grad_norm
+    args.target_kl = target_kl
 
-    args['batch_size'] = int(args['num_envs'] * args['num_steps'])
-    args['minibatch_size'] = int(args['batch_size'] // args['num_minibatches'])
-    args['num_iterations'] = args['total_timesteps'] // args['batch_size']
-    run_name = f"{args['env_id']}__{args['exp_name']}__{args['seed']}__{args['gae_lambda']}__{int(time.time())}" #I Added lambda here
+    args.batch_size = int(args.num_envs * args.num_steps)
+    args.minibatch_size = int(args.batch_size // args.num_minibatches)
+    args.num_iterations = args.total_timesteps // args.batch_size
+    run_name = f"{args.env_id}__{args.exp_name}__{args.seed}__{args.gae_lambda}__{int(time.time())}" #I Added lambda here
 
-    if args['track']:
+    if args.track:
         import wandb
 
         wandb.init(
-            project=args['wandb_project_name'],
-            entity=args['wandb_entity'],
+            project=args.wandb_project_name,
+            entity=args.wandb_entity,
             sync_tensorboard=True,
-            config=args,
+            config=vars(args),
             name=run_name,
             monitor_gym=True,
             save_code=True,
@@ -391,46 +417,46 @@ def ppo_run(
     )
 
     # TRY NOT TO MODIFY: seeding
-    random.seed(args['seed'])
-    np.random.seed(args['seed'])
-    torch.manual_seed(args['seed'])
-    torch.backends.cudnn.deterministic = args['torch_deterministic']
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    torch.backends.cudnn.deterministic = args.torch_deterministic
 
-    device = torch.device("cuda" if torch.cuda.is_available() and args['cuda'] else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
 
     # env setup
     envs = gym.vector.SyncVectorEnv(
-        [make_env(args['env_id'], i, args['capture_video'], run_name) for i in range(args['num_envs'])],
+        [make_env(args.env_id, i, args.capture_video, run_name) for i in range(args.num_envs)],
     )
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
     agent = Agent(envs).to(device)
-    optimizer = optim.Adam(agent.parameters(), lr=args['learning_rate'], eps=1e-5)
+    optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     # ALGO Logic: Storage setup
-    obs = torch.zeros((args['num_steps'], args['num_envs']) + envs.single_observation_space.shape).to(device)
-    actions = torch.zeros((args['num_steps'], args['num_envs']) + envs.single_action_space.shape).to(device)
-    logprobs = torch.zeros((args['num_steps'], args['num_envs'])).to(device)
-    rewards = torch.zeros((args['num_steps'], args['num_envs'])).to(device)
-    dones = torch.zeros((args['num_steps'], args['num_envs'])).to(device)
-    values = torch.zeros((args['num_steps'], args['num_envs'])).to(device)
+    obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape).to(device)
+    actions = torch.zeros((args.num_steps, args.num_envs) + envs.single_action_space.shape).to(device)
+    logprobs = torch.zeros((args.num_steps, args.num_envs)).to(device)
+    rewards = torch.zeros((args.num_steps, args.num_envs)).to(device)
+    dones = torch.zeros((args.num_steps, args.num_envs)).to(device)
+    values = torch.zeros((args.num_steps, args.num_envs)).to(device)
 
     # TRY NOT TO MODIFY: start the game
     global_step = 0
     start_time = time.time()
-    next_obs, _ = envs.reset(seed=args['seed'])
+    next_obs, _ = envs.reset(seed=args.seed)
     next_obs = torch.Tensor(next_obs).to(device)
-    next_done = torch.zeros(args['num_envs']).to(device)
+    next_done = torch.zeros(args.num_envs).to(device)
 
-    for iteration in range(1, args['num_iterations'] + 1):
+    for iteration in range(1, args.num_iterations + 1):
         # Annealing the rate if instructed to do so.
-        if args['anneal_lr']:
-            frac = 1.0 - (iteration - 1.0) / args['num_iterations']
-            lrnow = frac * args['learning_rate']
+        if args.anneal_lr:
+            frac = 1.0 - (iteration - 1.0) / args.num_iterations
+            lrnow = frac * args.learning_rate
             optimizer.param_groups[0]["lr"] = lrnow
 
-        for step in range(0, args['num_steps']):
-            global_step += args['num_envs']
+        for step in range(0, args.num_steps):
+            global_step += args.num_envs
             obs[step] = next_obs
             dones[step] = next_done
 
@@ -459,15 +485,15 @@ def ppo_run(
             next_value = agent.get_value(next_obs).reshape(1, -1)
             advantages = torch.zeros_like(rewards).to(device)
             lastgaelam = 0
-            for t in reversed(range(args['num_steps'])):
-                if t == args['num_steps'] - 1:
+            for t in reversed(range(args.num_steps)):
+                if t == args.num_steps - 1:
                     nextnonterminal = 1.0 - next_done
                     nextvalues = next_value
                 else:
                     nextnonterminal = 1.0 - dones[t + 1]
                     nextvalues = values[t + 1]
-                delta = rewards[t] + args['gamma'] * nextvalues * nextnonterminal - values[t]
-                advantages[t] = lastgaelam = delta + args['gamma'] * args['gae_lambda'] * nextnonterminal * lastgaelam
+                delta = rewards[t] + args.gamma * nextvalues * nextnonterminal - values[t]
+                advantages[t] = lastgaelam = delta + args.gamma * args.gae_lambda * nextnonterminal * lastgaelam
             returns = advantages + values
 
         # flatten the batch
@@ -479,12 +505,12 @@ def ppo_run(
         b_values = values.reshape(-1)
 
         # Optimizing the policy and value network
-        b_inds = np.arange(args['batch_size'])
+        b_inds = np.arange(args.batch_size)
         clipfracs = []
-        for epoch in range(args['update_epochs']):
+        for epoch in range(args.update_epochs):
             np.random.shuffle(b_inds)
-            for start in range(0, args['batch_size'], args['minibatch_size']):
-                end = start + args['minibatch_size']
+            for start in range(0, args.batch_size, args.minibatch_size):
+                end = start + args.minibatch_size
                 mb_inds = b_inds[start:end]
 
                 _, newlogprob, entropy, newvalue = agent.get_action_and_value(b_obs[mb_inds], b_actions.long()[mb_inds])
@@ -495,25 +521,25 @@ def ppo_run(
                     # calculate approx_kl http://joschu.net/blog/kl-approx.html
                     old_approx_kl = (-logratio).mean()
                     approx_kl = ((ratio - 1) - logratio).mean()
-                    clipfracs += [((ratio - 1.0).abs() > args['clip_coef']).float().mean().item()]
+                    clipfracs += [((ratio - 1.0).abs() > args.clip_coef).float().mean().item()]
 
                 mb_advantages = b_advantages[mb_inds]
-                if args['norm_adv']:
+                if args.norm_adv:
                     mb_advantages = (mb_advantages - mb_advantages.mean()) / (mb_advantages.std() + 1e-8)
 
                 # Policy loss
                 pg_loss1 = -mb_advantages * ratio
-                pg_loss2 = -mb_advantages * torch.clamp(ratio, 1 - args['clip_coef'], 1 + args['clip_coef'])
+                pg_loss2 = -mb_advantages * torch.clamp(ratio, 1 - args.clip_coef, 1 + args.clip_coef)
                 pg_loss = torch.max(pg_loss1, pg_loss2).mean()
 
                 # Value loss
                 newvalue = newvalue.view(-1)
-                if args['clip_vloss']:
+                if args.clip_vloss:
                     v_loss_unclipped = (newvalue - b_returns[mb_inds]) ** 2
                     v_clipped = b_values[mb_inds] + torch.clamp(
                         newvalue - b_values[mb_inds],
-                        -args['clip_coef'],
-                        args['clip_coef'],
+                        -args.clip_coef,
+                        args.clip_coef,
                     )
                     v_loss_clipped = (v_clipped - b_returns[mb_inds]) ** 2
                     v_loss_max = torch.max(v_loss_unclipped, v_loss_clipped)
@@ -522,14 +548,14 @@ def ppo_run(
                     v_loss = 0.5 * ((newvalue - b_returns[mb_inds]) ** 2).mean()
 
                 entropy_loss = entropy.mean()
-                loss = pg_loss - args['ent_coef'] * entropy_loss + v_loss * args['vf_coef']
+                loss = pg_loss - args.ent_coef * entropy_loss + v_loss * args.vf_coef
 
                 optimizer.zero_grad()
                 loss.backward()
-                nn.utils.clip_grad_norm_(agent.parameters(), args['max_grad_norm'])
+                nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
                 optimizer.step()
 
-            if args['target_kl'] is not None and approx_kl > args['target_kl']:
+            if args.target_kl is not None and approx_kl > args.target_kl:
                 break
 
         y_pred, y_true = b_values.cpu().numpy(), b_returns.cpu().numpy()
