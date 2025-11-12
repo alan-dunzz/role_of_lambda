@@ -311,7 +311,6 @@ class Agent(nn.Module):
     # envs.close()
     # writer.close()
 
-
 def ppo_run(
         exp_name = os.path.basename(__file__)[: -len(".py")],
         seed = 0,
@@ -340,58 +339,32 @@ def ppo_run(
         target_kl = 0.03,
         ):
     
-    # args = {}
-    # args['exp_name'] = exp_name
-    # args['seed'] = seed
-    # args['torch_deterministic'] = torch_deterministic
-    # args['cuda'] = cuda
-    # args['track'] = track
-    # args['wandb_project_name'] = wandb_project_name
-    # args['wandb_entity'] = wandb_entity
-    # args['capture_video'] = capture_video
-    # args['env_id'] = env_id
-    # args['total_timesteps'] = total_timesteps
-    # args['learning_rate'] = learning_rate
-    # args['num_envs'] = num_envs
-    # args['num_steps'] = num_steps
-    # args['anneal_lr'] = anneal_lr
-    # args['gamma'] = gamma
-    # args['gae_lambda'] = gae_lambda
-    # args['num_minibatches'] = num_minibatches
-    # args['update_epochs'] = update_epochs
-    # args['norm_adv'] = norm_adv
-    # args['clip_coef'] = clip_coef
-    # args['clip_vloss'] = clip_vloss
-    # args['ent_coef'] = ent_coef
-    # args['vf_coef'] = vf_coef
-    # args['max_grad_norm'] = max_grad_norm
-    # args['target_kl'] = target_kl
-    args = Args()
-    args.exp_name = exp_name
-    args.seed = seed
-    args.torch_deterministic = torch_deterministic
-    args.cuda = cuda
-    args.track = track
-    args.wandb_project_name = wandb_project_name
-    args.wandb_entity = wandb_entity
-    args.capture_video = capture_video
-    args.env_id = env_id
-    args.total_timesteps = total_timesteps
-    args.learning_rate = learning_rate
-    args.num_envs = num_envs
-    args.num_steps = num_steps
-    args.anneal_lr = anneal_lr
-    args.gamma = gamma
-    args.gae_lambda = gae_lambda
-    args.num_minibatches = num_minibatches
-    args.update_epochs = update_epochs
-    args.norm_adv = norm_adv
-    args.clip_coef = clip_coef
-    args.clip_vloss = clip_vloss
-    args.ent_coef = ent_coef
-    args.vf_coef = vf_coef
-    args.max_grad_norm = max_grad_norm
-    args.target_kl = target_kl
+    args = Args(exp_name=exp_name,
+                seed=seed,
+                torch_deterministic=torch_deterministic,
+                cuda = cuda,
+                track = track,
+                wandb_project_name = wandb_project_name,
+                wandb_entity = wandb_entity,
+                capture_video = capture_video,
+                env_id = env_id,
+                total_timesteps = total_timesteps,
+                learning_rate = learning_rate,
+                num_envs = num_envs,
+                num_steps = num_steps,
+                anneal_lr = anneal_lr,
+                gamma = gamma,
+                gae_lambda = gae_lambda,
+                num_minibatches = num_minibatches,
+                update_epochs = update_epochs,
+                norm_adv = norm_adv,
+                clip_coef = clip_coef,
+                clip_vloss = clip_vloss,
+                ent_coef = ent_coef,
+                vf_coef = vf_coef,
+                max_grad_norm = max_grad_norm,
+                target_kl = target_kl,
+    )
 
     args.batch_size = int(args.num_envs * args.num_steps)
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
