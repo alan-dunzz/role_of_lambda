@@ -366,7 +366,7 @@ def ppo_run(
     # args['vf_coef'] = vf_coef
     # args['max_grad_norm'] = max_grad_norm
     # args['target_kl'] = target_kl
-    args = tyro.cli(Args)
+    args = Args()
     args.exp_name = exp_name
     args.seed = seed
     args.torch_deterministic = torch_deterministic
