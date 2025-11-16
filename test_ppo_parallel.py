@@ -3,8 +3,8 @@ import numpy as np
 from ppo import ppo_run
 
 
-lambdas = [0.95]  # example with more than one lambda
-seeds = np.arange(0,5,1, dtype=int)
+lambdas = np.concatenate([np.linspace(0,0.9,10) , np.linspace(0.9,1,21)[1:]])
+seeds = np.arange(0,100,1, dtype=int)
 env = "CartPole-v1"
 
 # Create all combinations of lambda and seed
