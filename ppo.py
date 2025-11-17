@@ -311,13 +311,61 @@ class Agent(nn.Module):
     # envs.close()
     # writer.close()
 
+def ppo_run(
+        exp_name = os.path.basename(__file__)[: -len(".py")],
+        seed = 0,
+        torch_deterministic = True,
+        cuda = True,
+        track = True,
+        wandb_project_name = "role_of_lambda",
+        wandb_entity = "alan_dunzz-university-of-alberta",
+        capture_video = False,
+        env_id = "CartPole-v1",
+        total_timesteps = 10000,
+        learning_rate = 3e-4,
+        num_envs = 1,
+        num_steps = 128,
+        anneal_lr = True,
+        gamma = 0.99,
+        gae_lambda = 0.95,
+        num_minibatches = 4,
+        update_epochs = 4,
+        norm_adv = True,
+        clip_coef = 0.2,
+        clip_vloss = True,
+        ent_coef = 0.01,
+        vf_coef = 0.5,
+        max_grad_norm = 0.5,
+        target_kl = 0.03,
+        ):
+    
+    args = Args(exp_name=exp_name,
+                seed=seed,
+                torch_deterministic=torch_deterministic,
+                cuda = cuda,
+                track = track,
+                wandb_project_name = wandb_project_name,
+                wandb_entity = wandb_entity,
+                capture_video = capture_video,
+                env_id = env_id,
+                total_timesteps = total_timesteps,
+                learning_rate = learning_rate,
+                num_envs = num_envs,
+                num_steps = num_steps,
+                anneal_lr = anneal_lr,
+                gamma = gamma,
+                gae_lambda = gae_lambda,
+                num_minibatches = num_minibatches,
+                update_epochs = update_epochs,
+                norm_adv = norm_adv,
+                clip_coef = clip_coef,
+                clip_vloss = clip_vloss,
+                ent_coef = ent_coef,
+                vf_coef = vf_coef,
+                max_grad_norm = max_grad_norm,
+                target_kl = target_kl,
+    )
 
-def ppo_run(seed, gae_lambda, env_id, total_timesteps):
-    args = {}
-    args.gae_lambda = gae_lambda
-    args.env_id = env_id
-    args.total_timesteps = total_timesteps
-    args.seed = seed
     args.batch_size = int(args.num_envs * args.num_steps)
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
     args.num_iterations = args.total_timesteps // args.batch_size
