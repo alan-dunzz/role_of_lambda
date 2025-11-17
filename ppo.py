@@ -312,11 +312,12 @@ class Agent(nn.Module):
     # writer.close()
 
 
-def ppo_run(gae_lambda, env_id, total_timesteps):
-    args = tyro.cli(Args)
+def ppo_run(seed, gae_lambda, env_id, total_timesteps):
+    args = {}
     args.gae_lambda = gae_lambda
     args.env_id = env_id
     args.total_timesteps = total_timesteps
+    args.seed = seed
     args.batch_size = int(args.num_envs * args.num_steps)
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
     args.num_iterations = args.total_timesteps // args.batch_size
