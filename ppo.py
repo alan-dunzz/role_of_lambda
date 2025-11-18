@@ -203,6 +203,7 @@ def ppo_run(
     #     "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{key}|{value}|" for key, value in vars(args).items()])),
     # )
 
+
     # TRY NOT TO MODIFY: seeding
     random.seed(args.seed)
     np.random.seed(args.seed)
@@ -235,6 +236,10 @@ def ppo_run(
     next_obs = torch.Tensor(next_obs).to(device)
     next_done = torch.zeros(args.num_envs).to(device)
 
+
+    # Inicialization of the array with episodic returns
+    step_and_episodic_returns = []
+    
     for iteration in range(1, args.num_iterations + 1):
         # Annealing the rate if instructed to do so.
         if args.anneal_lr:
@@ -260,9 +265,10 @@ def ppo_run(
             rewards[step] = torch.tensor(reward).to(device).view(-1)
             next_obs, next_done = torch.Tensor(next_obs).to(device), torch.Tensor(next_done).to(device)
 
-            # if "final_info" in infos:
-            #     for info in infos["final_info"]:
-            #         if info and "episode" in info:
+            if "final_info" in infos:
+                for info in infos["final_info"]:
+                    if info and "episode" in info:
+                        step_and_episodic_returns.append((global_step, info["episode"]["r"]))
             #             print(f"global_step={global_step}, episodic_return={info['episode']['r']}")
             #             writer.add_scalar("charts/episodic_return", info["episode"]["r"], global_step)
             #             writer.add_scalar("charts/episodic_length", info["episode"]["l"], global_step)
@@ -363,3 +369,15 @@ def ppo_run(
 
     envs.close()
     # writer.close()
+
+    # Save the array with episodic returns to a file in folder runs/{env}/lambda_{value}/seed_{value}.csv
+    # Make sure the folder exists and create it if it does not
+    save_folder = f"runs/{args.env_id}/lambda_{args.gae_lambda}"
+    os.makedirs(save_folder, exist_ok=True)
+    save_path = os.path.join(save_folder, f"seed_{args.seed}.csv")
+
+    # Save to CSV with header
+    with open(save_path, "w") as f:
+        f.write("global_step,episodic_return\n")
+        for step, ret in step_and_episodic_returns:
+            f.write(f"{step},{ret}\n")
