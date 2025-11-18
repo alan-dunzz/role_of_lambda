@@ -17,9 +17,20 @@ api = wandb.Api()
 current_dir = os.getcwd()
 
 runs = api.runs("alan_dunzz-university-of-alberta/role_of_lambda")
-i = 0
 total = len(runs)
+i = 0
+"""
+# Recover specific runs
+run_ids = ['xckpo1v3', 'eji4nqbn', 'yo98yc9n', 'ww24f3vf', '8mvyp4nv', 'x2jza2di', 'm0guqn3d', 'vd7cerhm', 'iv0qt0bf', 'o13ce5sx', 'mk0ax9zz',
+           'j9htc3wr','zhhxja3m','2olnnbry','35mcr3nt','r1ncx0cb','r8g5z7nj','t2y9fpo7','t8vs1911','y13qxkjv','zoetdrby','00in18gq','349pczwl',
+           '4bvvz9ob','3xfipjbv','0xajzt1j','1xn9k4d7','2iipxilh','37c1i4r5','3lr4pyqu','wlcihes3','4ptztvsr','5kk8dkzs','5xgsj8j8','dkh4z8g8',
+           'e51dclkq','a2q5wtfe','5xgsj8j8','27m46zgq','297jurs7','2hxgz47p','4r0mr9gm','rh5y5frg','rm5hijb5','uogvnoxo','wl6dvnct','x1hu7hlz',
+           'xe9d7u30','xv8u5vfs','z5383pnz','4ffa17cw','554xiw9o','6hh5segt','00poim9j','3ig7hp95','1v4hl07f','36o1zxdk','6ashr68d','vxiujj17','zgsspocr']
 
+for run_id in run_ids:
+    run = api.run(f"alan_dunzz-university-of-alberta/role_of_lambda/{run_id}")
+"""
+# Iterate over all runs
 for run in tqdm(runs, total=total):
     try:
         seed = run.config.get("seed")
@@ -29,7 +40,6 @@ for run in tqdm(runs, total=total):
         else:
             lambda_clean = str(gae_lambda)
         print(fr"gae_lambda = {lambda_clean}, seed = {seed}")
-        
         out_file = f"run_lambda_{lambda_clean}_seed_{seed}.csv"
         i+=1
         if out_file in completed_files:
