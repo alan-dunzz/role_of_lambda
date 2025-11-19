@@ -49,7 +49,7 @@ for lambda_folder in lambda_folders:
             print(csv_path)
 
         # Averaging average returns of seeds
-        averaged_seeds.append(interpolated_values[y_col].mean())
+        averaged_seeds.append(interpolated_values.mean())
     
     print(f'Average over seeds for lambda={labas}: {np.array(averaged_seeds).mean()}')
     # Storing the averaged returns for this lambda 
