@@ -1,4 +1,3 @@
-    
 #!/bin/bash
 #SBATCH --account=aip-lelis
 #SBATCH --time=01:00:00
