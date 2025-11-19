@@ -1,4 +1,3 @@
-    
 #!/bin/bash
 
 # Total number of jobs to run
