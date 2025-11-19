@@ -50,6 +50,6 @@ for lambda_folder in lambda_folders:
     return_per_timestep_for_each_lambda[labas] = averaged_interpolated_returns
 
 # Saving the final dataframe
-analysed_data_folder = runs_folder / 'analysed_data'
+analysed_data_folder = 'runs/' + 'analysed_data'
 analysed_data_folder.mkdir(exist_ok=True)
-return_per_timestep_for_each_lambda.to_csv(analysed_data_folder / 'average_return_per_timestep_for_each_lambda.csv', index=False)
+return_per_timestep_for_each_lambda.to_csv(analysed_data_folder / f'average_return_per_timestep_for_each_lambda_{env_name}.csv', index=False)
