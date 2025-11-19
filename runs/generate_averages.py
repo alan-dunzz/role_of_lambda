@@ -51,9 +51,10 @@ for lambda_folder in lambda_folders:
         # Averaging average returns of seeds
         averaged_seeds.append(interpolated_values.mean())
     
-    print(f'Average over seeds for lambda={labas}: {np.array(averaged_seeds).mean()} +- {np.array(averaged_seeds).std()}')
+    confidence_interval_95_percent = 1.96 * (np.array(averaged_seeds).std() / np.sqrt(number_of_seeds))
+    print(f'Average over seeds for lambda={labas}: {np.array(averaged_seeds).mean()} +- {confidence_interval_95_percent}')
     # Storing the averaged returns for this lambda 
-    average_return_per_timestep_for_each_lambda[labas] = averaged_interpolated_returns
+    average_return_per_timestep_for_each_lambda[labas] = [averaged_interpolated_returns, np.array(averaged_seeds).std()z]
     print(f'Average for lambda={labas}: {averaged_interpolated_returns.mean()}')
 
 # Saving the final dataframe
