@@ -20,7 +20,7 @@ for (( i=0; i<${TOTAL_JOBS}; i+=${MAX_ARRAY_SIZE} )); do
 
   echo "Submitting jobs from ${START_INDEX} to ${END_INDEX}"
   # Submit the Slurm script with the start index as an argument
-  sbatch parallelize.sbatch ${START_INDEX}
+  sbatch parallelize_job.sbatch ${START_INDEX}
 done
 
   
