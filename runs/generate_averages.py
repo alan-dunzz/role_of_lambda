@@ -51,7 +51,7 @@ for lambda_folder in lambda_folders:
         # Averaging average returns of seeds
         averaged_seeds.append(interpolated_values.mean())
     
-    print(f'Average over seeds for lambda={labas}: {np.array(averaged_seeds).mean()}')
+    print(f'Average over seeds for lambda={labas}: {np.array(averaged_seeds).mean()} +- {np.array(averaged_seeds).std()}')
     # Storing the averaged returns for this lambda 
     average_return_per_timestep_for_each_lambda[labas] = averaged_interpolated_returns
     print(f'Average for lambda={labas}: {averaged_interpolated_returns.mean()}')
