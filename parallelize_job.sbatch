@@ -14,6 +14,6 @@ START_INDEX=$1
 GLOBAL_TASK_ID=$((START_INDEX + SLURM_ARRAY_TASK_ID))
 
 echo "Running job with global task ID: ${GLOBAL_TASK_ID}"
-# python test_ppo_parallel.py ${GLOBAL_TASK_ID}
+python test_ppo_parallel.py ${GLOBAL_TASK_ID}
 
   

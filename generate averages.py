@@ -48,6 +48,7 @@ for lambda_folder in lambda_folders:
             print(csv_path)
     # Storing the averaged returns for this lambda 
     return_per_timestep_for_each_lambda[labas] = averaged_interpolated_returns
+    print(f'Average for lambda={labas}: {averaged_interpolated_returns.mean()}')
 
 # Saving the final dataframe
 analysed_data_folder = 'runs/' + 'analysed_data'
