@@ -61,4 +61,4 @@ for lambda_folder in lambda_folders:
 analysed_data_folder = 'runs/' + 'analysed_data'
 analysed_data_folder = Path(analysed_data_folder)
 analysed_data_folder.mkdir(exist_ok=True)
-average_return_per_timestep_for_each_lambda.to_csv(analysed_data_folder / f'average_average_return_per_timestep_for_each_lambda_{env_name}.csv', index=False)
+average_return_per_timestep_for_each_lambda.to_csv(analysed_data_folder / f'average_return_per_timestep_for_each_lambda_{env_name}.csv', index=False)
