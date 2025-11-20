@@ -34,12 +34,12 @@ fig.update_traces(line=dict(color='blue'))
 fig.update_layout(width=2000, height=800)
 fig.update_xaxes(dtick=0.1)
 # Font size
-fig.update_layout(
-    title_font_size=24,
-    xaxis_title_font_size=20,
-    yaxis_title_font_size=20,
-    legend_font_size=16
-)
+# fig.update_layout(
+#     title_font_size=24,
+#     xaxis_title_font_size=20,
+#     yaxis_title_font_size=20,
+#     legend_font_size=16
+# )
 
 # Save plot
 fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.png')
