@@ -6,7 +6,7 @@ import numpy as np
 
 # Configs
 window_size = 2000
-theshold = 1/50000
+threshold = 3
 
 # Recover env name from command line argument
 env_name = sys.argv[1]
@@ -25,12 +25,12 @@ running_average_df = return_per_timestep_for_each_lambda.rolling(window=window_s
 convergence_speeds = []
 for lambda_value in running_average_df.columns:
     running_average_series = running_average_df[lambda_value]
-    five_hundred_step_derivative = running_average_series.diff()
+
+    final_average = np.mean(running_average_series[-10_000:])
     
-    running_average_series_threshold = running_average_series[
-        (five_hundred_step_derivative.abs() < theshold)
-    ]
-    convergence_timestep = np.where(running_average_series_threshold.index)[0]
+    difference_to_final = np.abs(running_average_series - final_average)
+
+    convergence_timestep = np.where(difference_to_final <= threshold)[0]
 
     if len(convergence_timestep) == 0:
         convergence_speeds.append([float(lambda_value), np.nan])
