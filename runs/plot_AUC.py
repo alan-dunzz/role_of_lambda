@@ -14,7 +14,6 @@ return_per_timestep_for_each_lambda = pd.read_csv(f'runs/analysed_data/average_r
 confidence_intervals = return_per_timestep_for_each_lambda.iloc[-1]
 return_per_timestep_for_each_lambda = return_per_timestep_for_each_lambda.iloc[:-1]
 
-
 # Calculate AUC for each lambda
 y = return_per_timestep_for_each_lambda.mean(axis=0)
 
