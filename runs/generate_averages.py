@@ -20,6 +20,7 @@ lambdas = [re.findall(r'\d*\.?\d+', lambda_folder)[-1] for lambda_folder in lamb
 
 # Load the csv for each lambda and each seed as a Pandas array
 average_return_per_timestep_for_each_lambda = pd.DataFrame(columns=lambdas)
+convergence_info = pd.DataFrame(columns=['lambda', 'convergence_value_mean', 'convergence_value_ci95'])
 for lambda_folder in lambda_folders:
     print(f'Reading folder: {runs_folder/lambda_folder}')
     
@@ -33,6 +34,7 @@ for lambda_folder in lambda_folders:
     # Interpolate and average different seeds
     averaged_interpolated_returns = np.zeros(500_000+1)
     averaged_seeds = []
+    convergence_values = []
     for csv_path in same_lambda_different_seeds_csvs:
         # Reading CSV
         dataframe = pd.read_csv(csv_path)
@@ -50,14 +52,23 @@ for lambda_folder in lambda_folders:
 
         # Averaging average returns of seeds
         averaged_seeds.append(interpolated_values.mean())
+
+        # Average of last 10_000 steps
+        convergence_value = interpolated_values[-10_000:].mean()
+        convergence_values.append(convergence_value)
     
-    # Calculating 95% confidence interval over seeds
+    # Calculating 95% confidence interval over seeds for the average return per timestep
     confidence_interval_95_percent = 1.96 * (np.array(averaged_seeds).std() / np.sqrt(number_of_seeds))
     print(f'Average over seeds for lambda={labas}: {np.array(averaged_seeds).mean():.2f} +- {confidence_interval_95_percent:.2f}')
-    
+
     # Storing the averaged returns for this lambda 
     average_return_per_timestep_for_each_lambda[labas] = [*averaged_interpolated_returns, confidence_interval_95_percent]
     print(f'Average for lambda={labas}: {averaged_interpolated_returns.mean()}')
+
+    # Calculating convergence value over seeds and confidence interval
+    convergence_value_mean = np.array(convergence_values).mean()
+    convergence_value_ci95 = 1.96 * (np.array(convergence_values).std() / np.sqrt(number_of_seeds))
+    convergence_info = pd.concat([convergence_info, pd.DataFrame([[float(labas), convergence_value_mean, convergence_value_ci95]], columns=['lambda', 'convergence_value_mean', 'convergence_value_ci95'])], ignore_index=True)
 
 # Saving the final dataframe
 analysed_data_folder = 'runs/' + 'analysed_data'
