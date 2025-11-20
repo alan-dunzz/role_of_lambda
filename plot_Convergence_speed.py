@@ -22,16 +22,18 @@ return_per_timestep_for_each_lambda = return_per_timestep_for_each_lambda.iloc[:
 running_average_df = return_per_timestep_for_each_lambda.rolling(window=window_size, min_periods=1).mean()
 
 # Get the timestep where running average crosses the threshold
-convergence_speeds = pd.DataFrame(columns=['lambda', 'convergence_timestep'])
+convergence_speeds = []
 for lambda_value in running_average_df.columns:
     running_average_series = running_average_df[lambda_value]
     convergence_timestep = np.where(running_average_series >= theshold)[0]
     if len(convergence_timestep) > 0:
-        convergence_speeds = convergence_speeds._append({'lambda': float(lambda_value), 'convergence_timestep': convergence_timestep[0]}, ignore_index=True)
+        convergence_speeds.append([float(lambda_value), convergence_timestep[0]])
     else:
-        convergence_speeds = convergence_speeds._append({'lambda': float(lambda_value), 'convergence_timestep': np.nan}, ignore_index=True)
+        convergence_speeds.append([float(lambda_value), np.nan])
+
+# Convert to DataFrame
+convergence_speeds = pd.DataFrame(convergence_speeds, columns=['lambda', 'convergence_timestep'])
 
 # Save plot convergence speed vs lambda
-fig = px.line(convergence_speeds, x='lambda', y='convergence_timestep', title=f'Convergence Speed vs Lambda in {env_name}', labels={'lambda': 'λ value', 'convergence_timestep': 'Convergence Timestep'})
-fig.write_image(f'runs/analysed_data/convergence_speed_vs_lambda_{env_name}.png')
-
+fig = px.line(convergence_speeds, x='lambda', y='convergence_timestep', title=f'Convergence Speed vs λ in {env_name}', labels={'lambda': 'λ value', 'convergence_timestep': 'Convergence Timestep'})
+fig.write_image(f'runs/analysed_data/Convergence_speed_vs_lambda_{env_name}.png')
