@@ -70,8 +70,11 @@ for lambda_folder in lambda_folders:
     convergence_value_ci95 = 1.96 * (np.array(convergence_values).std() / np.sqrt(number_of_seeds))
     convergence_info = pd.concat([convergence_info, pd.DataFrame([[float(labas), convergence_value_mean, convergence_value_ci95]], columns=['lambda', 'convergence_value_mean', 'convergence_value_ci95'])], ignore_index=True)
 
-# Saving the final dataframe
+# Saving the final dataframe of average return per timestep for each lambda
 analysed_data_folder = 'runs/' + 'analysed_data'
 analysed_data_folder = Path(analysed_data_folder)
 analysed_data_folder.mkdir(exist_ok=True)
 average_return_per_timestep_for_each_lambda.to_csv(analysed_data_folder / f'average_return_per_timestep_for_each_lambda_{env_name}.csv', index=False)
+
+# Saving convergence info
+convergence_info.to_csv(analysed_data_folder / f'convergence_info_{env_name}.csv', index=False)

@@ -45,3 +45,17 @@ fig = px.line(convergence_speeds, x='lambda', y='convergence_timestep', title=f'
 fig.update_xaxes(dtick=0.1)
 fig.update_layout(width=2000, height=800)
 fig.write_image(f'runs/analysed_data/Convergence_speed_vs_lambda_{env_name}.png')
+
+##############################################################################################################################################
+# Load convergence info and plot convergence value vs lambda
+convergence_info = pd.read_csv(f'runs/analysed_data/convergence_info_{env_name}.csv')
+fig2 = px.line(convergence_info, x='lambda', y='convergence_value_mean', title=f'Convergence Value per λ in {env_name}', labels={'lambda': 'λ value', 'convergence_value_mean': 'Convergence Value (Mean +- CI 95%)'})
+# Add confidence intervals as shaded area
+lower_bound = convergence_info['convergence_value_mean'] - convergence_info['convergence_value_ci95']
+upper_bound = convergence_info['convergence_value_mean'] + convergence_info['convergence_value_ci95']
+fig2.add_traces([
+    px.scatter(x=convergence_info['lambda'], y=lower_bound).update_traces(mode='lines', line=dict(color='lightgrey'), showlegend=False).data[0],
+    px.scatter(x=convergence_info['lambda'], y=upper_bound).update_traces(mode='lines', line=dict(color='lightgrey'), fill='tonexty', fillcolor='rgba(211,211,211,0.5)', showlegend=False).data[0]
+])
+fig2.update_layout(width=2000, height=800)
+fig2.write_image(f'runs/analysed_data/Convergence_value_vs_lambda_{env_name}.png')
