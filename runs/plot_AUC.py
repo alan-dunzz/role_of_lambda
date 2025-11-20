@@ -30,7 +30,8 @@ fig.add_traces([
 ])
 
 fig.update_layout(title=f'Area under the curve (AUC) in {env_name} (Average +- CI 95%)', xaxis_title='λ value', yaxis_title='Area Under the Curve (AUC)')
-fig.update_traces(line=dict(color='blue'), width=2000, height=800)
+fig.update_traces(line=dict(color='blue'))
+fig.update_layout(width=2000, height=800)
 fig.update_xaxes(dtick=0.1)
 
 # Save plot
