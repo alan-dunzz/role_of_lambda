@@ -30,7 +30,7 @@ for lambda_value in running_average_df.columns:
     running_average_series_threshold = running_average_series[
         (five_hundred_step_derivative.abs() < theshold)
     ]
-    convergence_timestep = np.where(running_average_series_threshold.index >= window_size)[0]
+    convergence_timestep = np.where(running_average_series_threshold.index)[0]
 
     if len(convergence_timestep) == 0:
         convergence_speeds.append([float(lambda_value), np.nan])
