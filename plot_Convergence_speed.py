@@ -34,7 +34,7 @@ for lambda_value in running_average_df.columns:
     if len(convergence_timestep) == 0:
         convergence_speeds.append([float(lambda_value), np.nan])
     else:
-        convergence_speeds.append([float(lambda_value), convergence_timestep[0]])
+        convergence_speeds.append([float(lambda_value), 500*convergence_timestep[0]])
 
 # Convert to DataFrame
 convergence_speeds = pd.DataFrame(convergence_speeds, columns=['lambda', 'convergence_timestep'])
