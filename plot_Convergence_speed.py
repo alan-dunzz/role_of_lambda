@@ -6,7 +6,7 @@ import numpy as np
 
 # Configs
 window_size = 2000
-theshold = 1/500
+theshold = 1/5000
 
 # Recover env name from command line argument
 env_name = sys.argv[1]
