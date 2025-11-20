@@ -27,9 +27,9 @@ for lambda_value in running_average_df.columns:
     running_average_series = running_average_df[lambda_value]
     convergence_timestep = np.where(running_average_series >= theshold)[0]
     if len(convergence_timestep) > 0:
-        convergence_speeds = convergence_speeds.append({'lambda': float(lambda_value), 'convergence_timestep': convergence_timestep[0]}, ignore_index=True)
+        convergence_speeds = convergence_speeds._append({'lambda': float(lambda_value), 'convergence_timestep': convergence_timestep[0]}, ignore_index=True)
     else:
-        convergence_speeds = convergence_speeds.append({'lambda': float(lambda_value), 'convergence_timestep': np.nan}, ignore_index=True)
+        convergence_speeds = convergence_speeds._append({'lambda': float(lambda_value), 'convergence_timestep': np.nan}, ignore_index=True)
 
 # Save plot convergence speed vs lambda
 fig = px.line(convergence_speeds, x='lambda', y='convergence_timestep', title=f'Convergence Speed vs Lambda in {env_name}', labels={'lambda': 'λ value', 'convergence_timestep': 'Convergence Timestep'})
