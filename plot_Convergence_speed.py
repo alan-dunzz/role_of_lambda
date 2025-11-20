@@ -5,8 +5,8 @@ import sys
 import numpy as np
 
 # Configs
-window_size = 1000
-theshold = 480
+window_size = 2000
+theshold = 450
 
 # Recover env name from command line argument
 env_name = sys.argv[1]
@@ -37,6 +37,5 @@ convergence_speeds = pd.DataFrame(convergence_speeds, columns=['lambda', 'conver
 # Save plot convergence speed vs lambda
 fig = px.line(convergence_speeds, x='lambda', y='convergence_timestep', title=f'Convergence Speed per λ in {env_name}', labels={'lambda': 'λ value', 'convergence_timestep': 'Steps to Convergence'})
 fig.update_xaxes(dtick=0.1)
-
-
+fig.update_traces(width=2000, height=800)
 fig.write_image(f'runs/analysed_data/Convergence_speed_vs_lambda_{env_name}.png')
