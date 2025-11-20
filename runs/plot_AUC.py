@@ -38,7 +38,9 @@ fig.update_layout(
     title_font_size=30,
     xaxis_title_font_size=25,
     yaxis_title_font_size=25,
-    legend_font_size=20
+    legend_font_size=20,
+    xaxis=dict(tickfont=dict(size=15)),
+    yaxis=dict(tickfont=dict(size=15))
 )
 
 # Save plot
