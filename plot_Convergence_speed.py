@@ -58,4 +58,5 @@ fig2.add_traces([
     px.scatter(x=convergence_info['lambda'], y=upper_bound).update_traces(mode='lines', line=dict(color='lightgrey'), fill='tonexty', fillcolor='rgba(211,211,211,0.5)', showlegend=False).data[0]
 ])
 fig2.update_layout(width=2000, height=800)
+fig2.update_xaxes(dtick=0.1)
 fig2.write_image(f'runs/analysed_data/Convergence_value_vs_lambda_{env_name}.png')

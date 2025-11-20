@@ -15,7 +15,7 @@ confidence_intervals = return_per_timestep_for_each_lambda.iloc[-1]
 return_per_timestep_for_each_lambda = return_per_timestep_for_each_lambda.iloc[:-1]
 
 # Calculate AUC for each lambda
-y = return_per_timestep_for_each_lambda.mean(axis=0)
+y = return_per_timestep_for_each_lambda.sum(axis=0)
 
 # Plot AUC vs lambda
 x = np.array(return_per_timestep_for_each_lambda.columns, dtype=np.float32)
@@ -33,6 +33,13 @@ fig.update_layout(title=f'Area under the curve (AUC) in {env_name} (Average +- C
 fig.update_traces(line=dict(color='blue'))
 fig.update_layout(width=2000, height=800)
 fig.update_xaxes(dtick=0.1)
+# Font size
+fig.update_layout(
+    title_font_size=24,
+    xaxis_title_font_size=20,
+    yaxis_title_font_size=20,
+    legend_font_size=16
+)
 
 # Save plot
 fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.png')
