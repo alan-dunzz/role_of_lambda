@@ -21,7 +21,7 @@ threshold = 3
 env_name = sys.argv[1]
 
 # Load dataframe
-return_per_timestep_for_each_lambda = pd.read_csv(f'runs/analysed_data/average_return_per_timestep_for_each_lambda_{env_name}.csv')
+return_per_timestep_for_each_lambda = pd.read_csv(f'runs/analyzed_data/average_return_per_timestep_for_each_lambda_{env_name}.csv')
 
 # Handle command line arguments
 if len(sys.argv) > 2:
@@ -79,8 +79,8 @@ fig.update_layout(
     yaxis=dict(tickfont=dict(size=25))
 )
 
-fig.write_image(f'runs/analysed_data/Convergence_speed_vs_lambda_{env_name}.png')
-fig.write_image(f'runs/analysed_data/Convergence_speed_vs_lambda_{env_name}.svg')
+fig.write_image(f'runs/analyzed_data/Convergence_speed_vs_lambda_{env_name}.png')
+fig.write_image(f'runs/analyzed_data/Convergence_speed_vs_lambda_{env_name}.svg')
 
 ##############################################################################################################################################
 # Calculate convergence info
@@ -94,7 +94,7 @@ convergence_info = pd.DataFrame({
     'convergence_value_ci95': convergence_ci95.values
 })
 # Load convergence info and plot convergence value vs lambda
-# convergence_info = pd.read_csv(f'runs/analysed_data/convergence_info_{env_name}.csv')
+# convergence_info = pd.read_csv(f'runs/analyzed_data/convergence_info_{env_name}.csv')
 fig2 = px.line(convergence_info, x='lambda', y='convergence_value_mean', title=f'Convergence Value per λ in {env_name}', labels={'lambda': 'λ value', 'convergence_value_mean': 'Convergence Value (Mean +- CI 95%)'})
 # Add confidence intervals as shaded area
 lower_bound = convergence_info['convergence_value_mean'] - convergence_info['convergence_value_ci95']
@@ -116,5 +116,5 @@ fig2.update_layout(
     yaxis=dict(tickfont=dict(size=25))
 )
 
-fig2.write_image(f'runs/analysed_data/Convergence_value_vs_lambda_{env_name}.png')
-fig2.write_image(f'runs/analysed_data/Convergence_value_vs_lambda_{env_name}.svg')
+fig2.write_image(f'runs/analyzed_data/Convergence_value_vs_lambda_{env_name}.png')
+fig2.write_image(f'runs/analyzed_data/Convergence_value_vs_lambda_{env_name}.svg')
