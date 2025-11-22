@@ -4,6 +4,13 @@ import numpy as np
 import sys
 import pandas as pd
 
+'''
+This script processes the results from multiple runs of PPO with different GAE lambda values and seeds, computes the average return per timestep for each lambda,
+and saves the results to a CSV file.
+Input:
+    - Command line argument 1: environment name (str)
+'''
+
 # Recover env name from command line argument
 env_name = sys.argv[1] 
 
@@ -71,10 +78,10 @@ for lambda_folder in lambda_folders:
     convergence_info = pd.concat([convergence_info, pd.DataFrame([[float(labas), convergence_value_mean, convergence_value_ci95]], columns=['lambda', 'convergence_value_mean', 'convergence_value_ci95'])], ignore_index=True)
 
 # Saving the final dataframe of average return per timestep for each lambda
-analysed_data_folder = 'runs/' + 'analysed_data'
-analysed_data_folder = Path(analysed_data_folder)
-analysed_data_folder.mkdir(exist_ok=True)
-average_return_per_timestep_for_each_lambda.to_csv(analysed_data_folder / f'average_return_per_timestep_for_each_lambda_{env_name}.csv', index=False)
+analyzed_data_folder = 'runs/' + 'analyzed_data'
+analyzed_data_folder = Path(analyzed_data_folder)
+analyzed_data_folder.mkdir(exist_ok=True)
+average_return_per_timestep_for_each_lambda.to_csv(analyzed_data_folder / f'average_return_per_timestep_for_each_lambda_{env_name}.csv', index=False)
 
 # Saving convergence info
-convergence_info.to_csv(analysed_data_folder / f'convergence_info_{env_name}.csv', index=False)
+convergence_info.to_csv(analyzed_data_folder / f'convergence_info_{env_name}.csv', index=False)

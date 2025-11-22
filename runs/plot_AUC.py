@@ -16,7 +16,7 @@ Input:
 env_name = sys.argv[1]
 
 # Load dataframe
-return_per_timestep_for_each_lambda = pd.read_csv(f'runs/analysed_data/average_return_per_timestep_for_each_lambda_{env_name}.csv')
+return_per_timestep_for_each_lambda = pd.read_csv(f'runs/analyzed_data/average_return_per_timestep_for_each_lambda_{env_name}.csv')
 
 # Retrieve data
 confidence_intervals = return_per_timestep_for_each_lambda.iloc[-1]
@@ -59,5 +59,5 @@ fig.update_layout(
 )
 
 # Save plot
-fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.svg')
-fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.png')
+fig.write_image(f'runs/analyzed_data/AUC_vs_lambda_{env_name}.svg')
+fig.write_image(f'runs/analyzed_data/AUC_vs_lambda_{env_name}.png')
