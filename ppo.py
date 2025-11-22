@@ -148,6 +148,9 @@ def ppo_run(
         clip_coef = 0.2,
         clip_vloss = True,
         ent_coef = 0.01,
+        anneal_entropy = False,
+        ent_coef_final = 0.01,
+        ent_coef_decay_start = 100_000,
         vf_coef = 0.5,
         max_grad_norm = 0.5,
         target_kl = 0.03,
@@ -246,6 +249,11 @@ def ppo_run(
             frac = 1.0 - (iteration - 1.0) / args.num_iterations
             lrnow = frac * args.learning_rate
             optimizer.param_groups[0]["lr"] = lrnow
+        
+        # Adjust entropy coefficient linearly over time
+        if anneal_entropy and global_step >= ent_coef_decay_start:
+            frac = 1.0 - (global_step - ent_coef_decay_start - 1.0) / (args.total_timesteps - ent_coef_decay_start)
+            ent_coef_now = frac * args.ent_coef
 
         for step in range(0, args.num_steps):
             global_step += args.num_envs
@@ -341,7 +349,7 @@ def ppo_run(
                     v_loss = 0.5 * ((newvalue - b_returns[mb_inds]) ** 2).mean()
 
                 entropy_loss = entropy.mean()
-                loss = pg_loss - args.ent_coef * entropy_loss + v_loss * args.vf_coef
+                loss = pg_loss - ent_coef_now * entropy_loss + v_loss * args.vf_coef
 
                 optimizer.zero_grad()
                 loss.backward()
@@ -368,16 +376,5 @@ def ppo_run(
         # writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
 
     envs.close()
+    return step_and_episodic_returns
     # writer.close()
-
-    # Save the array with episodic returns to a file in folder runs/{env}/lambda_{value}/seed_{value}.csv
-    # Make sure the folder exists and create it if it does not
-    save_folder = f"runs/{args.env_id}/lambda_{args.gae_lambda}"
-    os.makedirs(save_folder, exist_ok=True)
-    save_path = os.path.join(save_folder, f"seed_{args.seed}.csv")
-
-    # Save to CSV with header
-    with open(save_path, "w") as f:
-        f.write("global_step,episodic_return\n")
-        for step, ret in step_and_episodic_returns:
-            f.write(f"{step},{ret}\n")

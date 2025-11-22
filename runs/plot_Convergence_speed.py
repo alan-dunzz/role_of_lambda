@@ -45,6 +45,7 @@ fig = px.line(convergence_speeds, x='lambda', y='convergence_timestep', title=f'
 fig.update_xaxes(dtick=0.1)
 fig.update_layout(width=2000, height=800)
 fig.write_image(f'runs/analysed_data/Convergence_speed_vs_lambda_{env_name}.png')
+fig.write_image(f'runs/analysed_data/Convergence_speed_vs_lambda_{env_name}.svg')
 
 ##############################################################################################################################################
 # Load convergence info and plot convergence value vs lambda
@@ -60,3 +61,4 @@ fig2.add_traces([
 fig2.update_layout(width=2000, height=800)
 fig2.update_xaxes(dtick=0.1)
 fig2.write_image(f'runs/analysed_data/Convergence_value_vs_lambda_{env_name}.png')
+fig2.write_image(f'runs/analysed_data/Convergence_value_vs_lambda_{env_name}.svg')

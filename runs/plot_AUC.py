@@ -4,6 +4,14 @@ import plotly.express as px
 import sys
 import numpy as np
 
+'''
+Plot Area Under the Curve (AUC) vs lambda for a given environment.
+Saves the plot as PNG and SVG files.
+Input:
+    - Command line argument 1: environment name (str)
+    - (Optional) Command line argument 2: percentage of timesteps to sum up to (float between 0 and 1)
+'''
+
 # Recover env name from command line argument
 env_name = sys.argv[1]
 
@@ -15,7 +23,13 @@ confidence_intervals = return_per_timestep_for_each_lambda.iloc[-1]
 return_per_timestep_for_each_lambda = return_per_timestep_for_each_lambda.iloc[:-1]
 
 # Calculate AUC for each lambda
-y = return_per_timestep_for_each_lambda.mean(axis=0)
+# Check for a arg, if there is one, sum only up to that percentage of timesteps
+if len(sys.argv) > 2:
+    percentage_to_sum = sys.argv[2]
+    sum_up_to_idx = int(return_per_timestep_for_each_lambda.shape[0] * float(percentage_to_sum))
+    y = return_per_timestep_for_each_lambda.iloc[:sum_up_to_idx].sum(axis=0)
+else:
+    y = return_per_timestep_for_each_lambda.sum(axis=0)
 
 # Plot AUC vs lambda
 x = np.array(return_per_timestep_for_each_lambda.columns, dtype=np.float32)
@@ -45,3 +59,4 @@ fig.update_layout(
 
 # Save plot
 fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.png')
+fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.svg')
