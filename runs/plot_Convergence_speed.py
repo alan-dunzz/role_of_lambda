@@ -27,6 +27,7 @@ return_per_timestep_for_each_lambda = pd.read_csv(f'runs/analysed_data/average_r
 if len(sys.argv) > 2:
     percentage_to_average = sys.argv[2]
     average_from_idx = int(return_per_timestep_for_each_lambda.shape[0] * float(percentage_to_average))
+    print(f"Averaging from last {percentage_to_average} of timesteps, which is {average_from_idx} timesteps.")
 else:
     # Raise error if no argument is given
     raise ValueError("Please provide the percentage of timesteps to average from for the convergence value as a command line argument. (Between 0 and 1)")
