@@ -27,9 +27,9 @@ return_per_timestep_for_each_lambda = return_per_timestep_for_each_lambda.iloc[:
 if len(sys.argv) > 2:
     percentage_to_sum = sys.argv[2]
     sum_up_to_idx = int(return_per_timestep_for_each_lambda.shape[0] * float(percentage_to_sum))
-    y = return_per_timestep_for_each_lambda.iloc[:sum_up_to_idx].sum(axis=0)
+    y = return_per_timestep_for_each_lambda.iloc[:sum_up_to_idx].mean(axis=0)
 else:
-    y = return_per_timestep_for_each_lambda.sum(axis=0)
+    y = return_per_timestep_for_each_lambda.mean(axis=0)
 
 # Plot AUC vs lambda
 x = np.array(return_per_timestep_for_each_lambda.columns, dtype=np.float32)
