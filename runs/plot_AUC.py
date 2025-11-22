@@ -49,9 +49,7 @@ fig.update_layout(width=2000, height=800)
 fig.update_xaxes(dtick=0.1)
 
 # Save plot
-fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.png')
-
-
+fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.svg')
 
 # Font size
 fig.update_layout(
@@ -62,4 +60,4 @@ fig.update_layout(
     xaxis=dict(tickfont=dict(size=20)),
     yaxis=dict(tickfont=dict(size=25))
 )
-fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.svg')
+fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.png')
