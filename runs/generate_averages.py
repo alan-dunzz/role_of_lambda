@@ -60,7 +60,7 @@ for lambda_folder in lambda_folders:
     # Calculating 95% confidence interval over seeds for the average return per timestep
     confidence_interval_95_percent = 1.96 * (np.array(averaged_seeds).std() / np.sqrt(number_of_seeds))
     print(f'Average over seeds for lambda={labas}: {np.array(averaged_seeds).mean():.2f} +- {confidence_interval_95_percent:.2f}')
-
+    
     # Storing the averaged returns for this lambda 
     average_return_per_timestep_for_each_lambda[labas] = [*averaged_interpolated_returns, confidence_interval_95_percent]
     print(f'Average for lambda={labas}: {averaged_interpolated_returns.mean()}')

@@ -23,6 +23,14 @@ env_name = sys.argv[1]
 # Load dataframe
 return_per_timestep_for_each_lambda = pd.read_csv(f'runs/analysed_data/average_return_per_timestep_for_each_lambda_{env_name}.csv')
 
+# Handle command line arguments
+if len(sys.argv) > 2:
+    percentage_to_average = sys.argv[2]
+    average_from_idx = int(return_per_timestep_for_each_lambda.shape[0] * float(percentage_to_average))
+else:
+    # Raise error if no argument is given
+    raise ValueError("Please provide the percentage of timesteps to average from for the convergence value as a command line argument. (Between 0 and 1)")
+
 # Retrieve data
 confidence_intervals = return_per_timestep_for_each_lambda.iloc[-1]
 return_per_timestep_for_each_lambda = return_per_timestep_for_each_lambda.iloc[:-1] # DF with shape (timesteps, lambdas)
@@ -33,23 +41,23 @@ running_average_df = return_per_timestep_for_each_lambda.rolling(window=window_s
 # Get the timestep where running average crosses the threshold
 convergence_speeds = []
 for lambda_value in running_average_df.columns:
+    # Get the series for this lambda
     running_average_series = running_average_df[lambda_value]
 
-    if len(sys.argv) > 2:
-        percentage_to_average = sys.argv[2]
-        average_from_idx = int(return_per_timestep_for_each_lambda.shape[0] * float(percentage_to_average))
-        # print(f'Averaging the last {average_from_idx} timesteps')
-        final_average = np.mean(running_average_series[-average_from_idx:])
-    else:
-        final_average = np.mean(running_average_series[-10_000:])
-    
+    # Get the final average from the last percentage of timesteps
+    final_average = np.mean(running_average_series[-average_from_idx:])
+        
+    # Get the absolute difference between running average and final average
     difference_to_final = np.abs(running_average_series - final_average)
 
+    # Get the first timestep where the difference is below the threshold
     convergence_timestep = np.where(difference_to_final <= threshold)[0]
 
     if len(convergence_timestep) == 0:
+        # If no convergence timestep found, set to NaN
         convergence_speeds.append([float(lambda_value), np.nan])
     else:
+        # Save the first convergence timestep
         convergence_speeds.append([float(lambda_value), convergence_timestep[0]])
 
 # Convert to DataFrame
@@ -74,8 +82,18 @@ fig.write_image(f'runs/analysed_data/Convergence_speed_vs_lambda_{env_name}.png'
 fig.write_image(f'runs/analysed_data/Convergence_speed_vs_lambda_{env_name}.svg')
 
 ##############################################################################################################################################
+# Calculate convergence info
+slice_at_the_end = return_per_timestep_for_each_lambda.iloc[-average_from_idx:]
+convergence_averages = slice_at_the_end.mean()
+convergence_std = slice_at_the_end.std()
+convergence_ci95 = 1.96 * (convergence_std / np.sqrt(slice_at_the_end.shape[0]))
+convergence_info = pd.DataFrame({
+    'lambda': convergence_averages.index.astype(float),
+    'convergence_value_mean': convergence_averages.values,
+    'convergence_value_ci95': convergence_ci95.values
+})
 # Load convergence info and plot convergence value vs lambda
-convergence_info = pd.read_csv(f'runs/analysed_data/convergence_info_{env_name}.csv')
+# convergence_info = pd.read_csv(f'runs/analysed_data/convergence_info_{env_name}.csv')
 fig2 = px.line(convergence_info, x='lambda', y='convergence_value_mean', title=f'Convergence Value per λ in {env_name}', labels={'lambda': 'λ value', 'convergence_value_mean': 'Convergence Value (Mean +- CI 95%)'})
 # Add confidence intervals as shaded area
 lower_bound = convergence_info['convergence_value_mean'] - convergence_info['convergence_value_ci95']
