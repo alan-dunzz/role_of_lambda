@@ -56,8 +56,9 @@ convergence_speeds = pd.DataFrame(convergence_speeds, columns=['lambda', 'conver
 
 # Save plot convergence speed vs lambda
 fig = px.line(convergence_speeds, x='lambda', y='convergence_timestep', title=f'Convergence Speed per λ in {env_name}', labels={'lambda': 'λ value', 'convergence_timestep': 'Steps to Convergence'})
-fig.update_xaxes(dtick=0.1)
+fig.update_traces(line=dict(color='blue'))
 fig.update_layout(width=2000, height=800)
+fig.update_xaxes(dtick=0.1)
 # Font size
 fig.update_layout(
     title_font_size=30,
@@ -82,6 +83,7 @@ fig2.add_traces([
     px.scatter(x=convergence_info['lambda'], y=lower_bound).update_traces(mode='lines', line=dict(color='lightgrey'), showlegend=False).data[0],
     px.scatter(x=convergence_info['lambda'], y=upper_bound).update_traces(mode='lines', line=dict(color='lightgrey'), fill='tonexty', fillcolor='rgba(211,211,211,0.5)', showlegend=False).data[0]
 ])
+fig.update_traces(line=dict(color='blue'))
 fig2.update_layout(width=2000, height=800)
 fig2.update_xaxes(dtick=0.1)
 # Font size
