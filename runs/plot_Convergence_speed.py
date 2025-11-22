@@ -38,6 +38,7 @@ for lambda_value in running_average_df.columns:
     if len(sys.argv) > 2:
         percentage_to_average = sys.argv[2]
         average_from_idx = int(return_per_timestep_for_each_lambda.shape[0] * float(percentage_to_average))
+        print(f'Averaging the last {average_from_idx} timesteps')
         final_average = np.mean(running_average_series[-average_from_idx:])
     else:
         final_average = np.mean(running_average_series[-10_000:])
