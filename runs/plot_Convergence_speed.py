@@ -83,7 +83,7 @@ fig2.add_traces([
     px.scatter(x=convergence_info['lambda'], y=lower_bound).update_traces(mode='lines', line=dict(color='lightgrey'), showlegend=False).data[0],
     px.scatter(x=convergence_info['lambda'], y=upper_bound).update_traces(mode='lines', line=dict(color='lightgrey'), fill='tonexty', fillcolor='rgba(211,211,211,0.5)', showlegend=False).data[0]
 ])
-fig.update_traces(line=dict(color='blue'))
+fig2.update_traces(line=dict(color='blue'))
 fig2.update_layout(width=2000, height=800)
 fig2.update_xaxes(dtick=0.1)
 # Font size
