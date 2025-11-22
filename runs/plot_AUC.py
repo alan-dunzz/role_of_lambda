@@ -43,10 +43,16 @@ fig.add_traces([
     px.scatter(x=x, y=upper_bound).update_traces(mode='lines', line=dict(color='lightgrey'), fill='tonexty', fillcolor='rgba(211,211,211,0.5)', showlegend=False).data[0]
 ])
 
-fig.update_layout(title=f'Area under the curve (AUC) in {env_name} (Average +- CI 95%)', xaxis_title='λ value', yaxis_title='Area Under the Curve (AUC)')
+fig.update_layout(title=f'Area under the curve (AUC) in {env_name} (Average ± CI 95%)', xaxis_title='λ value', yaxis_title='Area Under the Curve (AUC)')
 fig.update_traces(line=dict(color='blue'))
 fig.update_layout(width=2000, height=800)
 fig.update_xaxes(dtick=0.1)
+
+# Save plot
+fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.png')
+
+
+
 # Font size
 fig.update_layout(
     title_font_size=30,
@@ -56,7 +62,4 @@ fig.update_layout(
     xaxis=dict(tickfont=dict(size=20)),
     yaxis=dict(tickfont=dict(size=25))
 )
-
-# Save plot
-fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.png')
 fig.write_image(f'runs/analysed_data/AUC_vs_lambda_{env_name}.svg')
