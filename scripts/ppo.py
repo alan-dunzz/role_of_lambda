@@ -254,6 +254,8 @@ def ppo_run(
         if anneal_entropy and global_step >= ent_coef_decay_start:
             frac = 1.0 - (global_step - ent_coef_decay_start - 1.0) / (args.total_timesteps - ent_coef_decay_start)
             ent_coef_now = frac * args.ent_coef
+        else:
+            ent_coef_now = args.ent_coef
 
         for step in range(0, args.num_steps):
             global_step += args.num_envs
