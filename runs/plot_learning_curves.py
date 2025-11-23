@@ -30,6 +30,8 @@ for labas in lambdas_to_plot:
     fig.add_scatter(x=return_per_timestep_for_each_lambda.index, y=return_per_timestep_for_each_lambda[labas], mode='lines', name=f'λ={labas}')
 fig.update_layout(width=2000, height=800)
 fig.update_xaxes(dtick=50_000)
+# x and y Axis titles
+fig.update_layout(xaxis_title='Timesteps', yaxis_title='Episodic Return')
 # Font size
 fig.update_layout(
     title_font_size=30,
