@@ -7,6 +7,7 @@
 #SBATCH -e jobs_outputs/job-%A_%a.err
 # Note: Don't add #SBATCH --array. It is removed from here because it is now passed dynamically via the command line in Script 1.
 
+source RoL/bin/activate
 
 # The starting index passed from the submission script (Argument 1)
 START_INDEX=$1
