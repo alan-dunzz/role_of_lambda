@@ -12,7 +12,7 @@ Input:
 '''
 
 # Recover env name from command line argument
-env_name = sys.argv[1] 
+env_name = sys.argv[1]
 
 # Folder with the runs
 runs_folder = 'runs/' + env_name + '/'
@@ -61,7 +61,12 @@ for lambda_folder in lambda_folders:
         averaged_seeds.append(interpolated_values.mean())
 
         # Average of last 10_000 steps
-        convergence_value = interpolated_values[-10_000:].mean()
+        if len(sys.argv) > 2:
+            percentage_to_average = sys.argv[2]
+            last_n_steps = int(500_000 * float(percentage_to_average))
+            convergence_value = interpolated_values[-last_n_steps:].mean()
+        else:
+            convergence_value = interpolated_values[-10_000:].mean()
         convergence_values.append(convergence_value)
     
     # Calculating 95% confidence interval over seeds for the average return per timestep
