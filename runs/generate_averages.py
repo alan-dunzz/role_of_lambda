@@ -64,7 +64,6 @@ for lambda_folder in lambda_folders:
         if len(sys.argv) > 2:
             percentage_to_average = sys.argv[2]
             last_n_steps = int(500_000 * float(percentage_to_average))
-            print(f"Averaging convergence value from last {percentage_to_average} of timesteps, which is {last_n_steps} timesteps.")
             convergence_value = interpolated_values[-last_n_steps:].mean()
         else:
             convergence_value = interpolated_values[-10_000:].mean()
