@@ -32,5 +32,5 @@ for (( i=0; i<${TOTAL_JOBS}; i+=${MAX_ARRAY_SIZE} )); do
   # We pass the --array flag HERE to override/set the array size dynamically.
   # We pass $i (start index) as arg $1
   # We pass $PYTHON_SCRIPT as arg $2
-  sbatch --array=0-${CURRENT_LIMIT} parallelize_job.sbatch $i $PYTHON_SCRIPT
+  sbatch --array=0-${CURRENT_LIMIT} scripts/parallelize_job.sbatch $i $PYTHON_SCRIPT
 done
