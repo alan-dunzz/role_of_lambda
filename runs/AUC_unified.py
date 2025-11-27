@@ -89,5 +89,5 @@ fig.update_layout(
 )
 
 # Save plot
-fig.write_image(f'runs/analyzed_data/AUC_vs_lambda_{env_name}.svg')
-fig.write_image(f'runs/analyzed_data/AUC_vs_lambda_{env_name}.png')
+fig.write_image(f'runs/analyzed_data/unified_AUC{env_name}.svg')
+fig.write_image(f'runs/analyzed_data/unified_AUC{env_name}.png')
