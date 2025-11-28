@@ -79,6 +79,9 @@ for lambda_folder in lambda_folders:
             early_learning_value = interpolated_values[:125_000].mean()
         early_learning_values.append(early_learning_value)
     
+    early_percentile_5,early_percentile_95 = np.percentile(early_learning_values,[5,95])
+    conv_percentile_5,conv_percentile_95 = np.percentile(convergence_values,[5,95])
+
     # Calculating 95% confidence interval over seeds for the average return per timestep
     confidence_interval_95_percent = 1.96 * (np.array(averaged_seeds).std() / np.sqrt(number_of_seeds))
     print(f'Average over seeds for lambda={labas}: {np.array(averaged_seeds).mean():.2f} +- {confidence_interval_95_percent:.2f}')
@@ -90,11 +93,11 @@ for lambda_folder in lambda_folders:
     # Calculating convergence value over seeds and confidence interval
     convergence_value_mean = np.array(convergence_values).mean()
     convergence_value_ci95 = 1.96 * (np.array(convergence_values).std() / np.sqrt(number_of_seeds))
-    convergence_info = pd.concat([convergence_info, pd.DataFrame([[float(labas), convergence_value_mean, convergence_value_ci95]], columns=['lambda', 'convergence_value_mean', 'convergence_value_ci95'])], ignore_index=True)
+    convergence_info = pd.concat([convergence_info, pd.DataFrame([[float(labas), convergence_value_mean, convergence_value_ci95,conv_percentile_5,conv_percentile_95]], columns=['lambda', 'convergence_value_mean', 'convergence_value_ci95','convergence_p5','convergence_p95'])], ignore_index=True)
 
     early_learning_value_mean = np.array(early_learning_values).mean()
     early_learning_value_ci95 =  1.96 * (np.array(early_learning_values).std() / np.sqrt(number_of_seeds))  
-    early_learning_info = pd.concat([early_learning_info, pd.DataFrame([[float(labas), early_learning_value_mean, early_learning_value_ci95]], columns=['lambda', 'early_learning_value_mean', 'early_learning_value_ci95'])], ignore_index=True)
+    early_learning_info = pd.concat([early_learning_info, pd.DataFrame([[float(labas), early_learning_value_mean, early_learning_value_ci95,early_percentile_5,early_percentile_95]], columns=['lambda', 'early_learning_value_mean', 'early_learning_value_ci95','early_learning_p5','early_learning_p95'])], ignore_index=True)
 
 # Saving the final dataframe of average return per timestep for each lambda
 analyzed_data_folder = 'runs/' + 'analyzed_data'
