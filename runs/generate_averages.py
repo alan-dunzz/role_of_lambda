@@ -42,6 +42,7 @@ for lambda_folder in lambda_folders:
     averaged_interpolated_returns = np.zeros(500_000+1)
     averaged_seeds = []
     convergence_values = []
+    early_learning_values = []
     for csv_path in same_lambda_different_seeds_csvs:
         # Reading CSV
         dataframe = pd.read_csv(csv_path)
@@ -68,6 +69,14 @@ for lambda_folder in lambda_folders:
         else:
             convergence_value = interpolated_values[-10_000:].mean()
         convergence_values.append(convergence_value)
+
+        if len(sys.argv) > 3:
+            percentage_to_average = sys.argv[3]
+            first_n_steps = int(500_000 * float(percentage_to_average))
+            early_learning_value = interpolated_values[:first_n_steps].mean()
+        else:
+            early_learning_value = interpolated_values[:125_000].mean()
+        early_learning_values.append(convergence_value)
     
     # Calculating 95% confidence interval over seeds for the average return per timestep
     confidence_interval_95_percent = 1.96 * (np.array(averaged_seeds).std() / np.sqrt(number_of_seeds))
@@ -82,6 +91,10 @@ for lambda_folder in lambda_folders:
     convergence_value_ci95 = 1.96 * (np.array(convergence_values).std() / np.sqrt(number_of_seeds))
     convergence_info = pd.concat([convergence_info, pd.DataFrame([[float(labas), convergence_value_mean, convergence_value_ci95]], columns=['lambda', 'convergence_value_mean', 'convergence_value_ci95'])], ignore_index=True)
 
+    early_learning_value_mean = np.array(early_learning_values).mean()
+    early_learning_value_ci95 =  1.96 * (np.array(early_learning_values).std() / np.sqrt(number_of_seeds))  
+    early_learning_info = pd.concat([early_learning_info, pd.DataFrame([[float(labas), early_learning_value_mean, early_learning_value_ci95]], columns=['lambda', 'early_learning_value_mean', 'early_learning_value_ci95'])], ignore_index=True)
+
 # Saving the final dataframe of average return per timestep for each lambda
 analyzed_data_folder = 'runs/' + 'analyzed_data'
 analyzed_data_folder = Path(analyzed_data_folder)
@@ -90,3 +103,4 @@ average_return_per_timestep_for_each_lambda.to_csv(analyzed_data_folder / f'aver
 
 # Saving convergence info
 convergence_info.to_csv(analyzed_data_folder / f'convergence_info_{env_name}.csv', index=False)
+early_learning_info.to_csv(analyzed_data_folder / f'early_learning_info_{env_name}.csv', index = False)
