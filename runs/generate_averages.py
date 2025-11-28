@@ -77,7 +77,7 @@ for lambda_folder in lambda_folders:
             early_learning_value = interpolated_values[:first_n_steps].mean()
         else:
             early_learning_value = interpolated_values[:125_000].mean()
-        early_learning_values.append(convergence_value)
+        early_learning_values.append(early_learning_value)
     
     # Calculating 95% confidence interval over seeds for the average return per timestep
     confidence_interval_95_percent = 1.96 * (np.array(averaged_seeds).std() / np.sqrt(number_of_seeds))
