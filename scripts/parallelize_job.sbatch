@@ -1,5 +1,4 @@
 #!/bin/bash
-#SBATCH --account=aip-lelis
 #SBATCH --time=00:30:00
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=700M
