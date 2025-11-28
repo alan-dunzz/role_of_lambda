@@ -28,6 +28,7 @@ lambdas = [re.findall(r'\d*\.?\d+', lambda_folder)[-1] for lambda_folder in lamb
 # Load the csv for each lambda and each seed as a Pandas array
 average_return_per_timestep_for_each_lambda = pd.DataFrame(columns=lambdas)
 convergence_info = pd.DataFrame(columns=['lambda', 'convergence_value_mean', 'convergence_value_ci95'])
+early_learning_info = pd.DataFrame(columns=['lambda', 'early_learning_value_mean', 'early_learning_value_ci95'])
 for lambda_folder in lambda_folders:
     print(f'Reading folder: {runs_folder/lambda_folder}')
     
