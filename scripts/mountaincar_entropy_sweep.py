@@ -20,7 +20,8 @@ seed = int(seed)
 step_and_episodic_returns = ppo_run(
     env_id=env,
     gae_lambda=0.95, seed=seed,
-    total_timesteps=500_000,
+    total_timesteps=1_000_000,
+    num_steps=2048,
     ent_coef=entropy_coefficient,
     anneal_entropy=use_entropy
 )
