@@ -164,8 +164,6 @@ def ppo_run(
                 torch_deterministic=torch_deterministic,
                 cuda = cuda,
                 track = track,
-                # wandb_project_name = wandb_project_name,
-                # wandb_entity = wandb_entity,
                 capture_video = capture_video,
                 env_id = env_id,
                 total_timesteps = total_timesteps,
