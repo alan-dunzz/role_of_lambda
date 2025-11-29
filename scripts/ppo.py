@@ -87,7 +87,7 @@ def make_env(env_id, idx, capture_video, run_name):
             if env != 'MountainCar-v0':   #Handle MountainCar custom episode length
                 env = gym.make(env_id)
             else: 
-                env = gym.make(env_id,max_episode_steps=1000)
+                env = gym.make(id=env_id,max_episode_steps=1000)
         env = gym.wrappers.RecordEpisodeStatistics(env)
         return env
 
