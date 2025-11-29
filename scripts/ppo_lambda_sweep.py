@@ -6,7 +6,7 @@ import os
 # Define the range of lambda values, seeds and environment
 lambdas = np.concatenate([np.linspace(0,0.9,91) , np.linspace(0.9,1,21)[1:]])
 seeds = np.arange(0,100,1, dtype=int)
-env = "CartPole-v1"
+env = "Acrobot-v1"
 
 # Create all combinations of lambda and seed
 combinations = [(gae_lambda, seed) for gae_lambda in lambdas for seed in seeds]
