@@ -4,31 +4,31 @@ from ppo import ppo_run
 import os
 import itertools
 
-# Define the range of lambda values, seeds and environment
-entropy_coefficients = [0.1, 0.2, 0.3, 0.4, 0.5]
-use_entropy_array = [True, False]
+# Define the range of lambda values, learning rates, seeds and environment
+learning_rates = np.array([1e-3,3e-3,6e-3,1e-4,3e-4,6e-4,1e-5,3e-5,6e-5])
+lambdas = [0.0,0.36,0.68,0.84,0.92,0.96,0.98,0.99,1.0]
+anneal_lrs = [True,False]
 seeds = np.arange(0,30,1, dtype=int)
-env = "MountainCar-v0"
+env = "CartPole-v1"
 
-# Create all combinations of lambda and seed
-combinations = list(itertools.product(entropy_coefficients, seeds, use_entropy_array))
+# Create all combinations of lambda, learning rates and seed
+combinations = list(itertools.product(lambdas, learning_rates,seeds,anneal_lrs))
 i = int(sys.argv[1])
-entropy_coefficient, seed, use_entropy = combinations[i]
+laba, learning_rate, seed, anneal_lr = combinations[i]
 
 seed = int(seed)
 
 step_and_episodic_returns = ppo_run(
     env_id=env,
-    gae_lambda=0.95, seed=seed,
-    total_timesteps=1_000_000,
-    num_steps=512,
-    ent_coef=entropy_coefficient,
-    anneal_entropy=use_entropy
+    gae_lambda=laba, seed=seed,
+    total_timesteps=500_000,
+    learning_rate=learning_rate,
+    anneal_lr=anneal_lr
 )
 
 # Save the array with episodic returns to a file in folder runs/{env}/lambda_{value}/seed_{value}.csv
 # Make sure the folder exists and create it if it does not
-save_folder = f"runs/{env}/entropy_sweep/ent_coef_{entropy_coefficient}/use_entropy_{use_entropy}/"
+save_folder = f"runs/{env}/lr_sweep/lambda_{laba}/learning_rate_{learning_rate}/anneal_lr_{anneal_lr}/"
 os.makedirs(save_folder, exist_ok=True)
 save_path = os.path.join(save_folder, f"seed_{seed}.csv")
 

@@ -141,12 +141,12 @@ def ppo_run(
         total_timesteps = 10000,
         learning_rate = 3e-4,
         num_envs = 1,
-        num_steps = 128,
+        num_steps = 128, #2048
         anneal_lr = True,
         gamma = 0.99,
         gae_lambda = 0.95,
-        num_minibatches = 4,
-        update_epochs = 4,
+        num_minibatches = 4, #32
+        update_epochs = 4, 
         norm_adv = True,
         clip_coef = 0.2,
         clip_vloss = True,
