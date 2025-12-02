@@ -6,7 +6,7 @@ import os
 # Define the range of lambda values, seeds and environment
 lambdas = np.concatenate([np.linspace(0,0.9,91) , np.linspace(0.9,1,21)[1:]])
 seeds = np.arange(0,100,1, dtype=int)
-env = "Acrobot-v1"
+env = "MountainCar-v1"
 
 # Create all combinations of lambda and seed
 combinations = [(gae_lambda, seed) for gae_lambda in lambdas for seed in seeds]
@@ -18,7 +18,9 @@ seed = int(seed)
 step_and_episodic_returns = ppo_run(
     env_id=env,
     gae_lambda=gae_lambda,seed=seed, 
-    total_timesteps=500_000
+    total_timesteps=1_000_000,
+    num_minibatches=32,
+    num_steps=2048
 )
 
 # Save the array with episodic returns to a file in folder runs/{env}/lambda_{value}/seed_{value}.csv
