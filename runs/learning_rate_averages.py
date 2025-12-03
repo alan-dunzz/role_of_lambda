@@ -27,9 +27,11 @@ if not runs_folder.exists():
 # Get folder for each lambda
 subfolders = [item for item in runs_folder.iterdir() if item.is_dir()]
 lambda_folders = sorted([item.name for item in runs_folder.iterdir() if item.is_dir()])
-
+print(lambda_folders)
 lr_folders = sorted([item.name for item in Path(f'{runs_folder}/'+lambda_folders[0]).iterdir() if item.is_dir()])
+print(lr_folders)
 lr_scheme_folders = sorted([item.name for item in Path(f'{runs_folder}/'+f'{lambda_folders[0]}/'+lr_folders[0]).iterdir() if item.is_dir()])
+print(lr_scheme_folders)
 lr_folders_shortned = [re.sub('learning_rate', 'lr', s) for s in lr_folders]
 
 combinations = [a + b for a, b in product(lambda_folders, lr_folders_shortned)]
