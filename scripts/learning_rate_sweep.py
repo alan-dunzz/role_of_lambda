@@ -9,7 +9,7 @@ learning_rates = np.array([1e-3,3e-3,6e-3,1e-4,3e-4,6e-4,1e-5,3e-5,6e-5])
 lambdas = [0.0,0.36,0.68,0.84,0.92,0.96,0.98,0.99,1.0]
 anneal_lrs = [True,False]
 seeds = np.arange(0,30,1, dtype=int)
-env = "CartPole-v1"
+env = "Acrobot-v1"
 
 # Create all combinations of lambda, learning rates and seed
 combinations = list(itertools.product(lambdas, learning_rates,seeds,anneal_lrs))
