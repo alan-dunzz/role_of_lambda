@@ -1,15 +1,16 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 plt.rcParams.update({
     "text.usetex": True,                     # use LaTeX to render text
     "font.family": "serif",
     "font.serif": ["Computer Modern Roman"], # Computer Modern (LaTeX default)
-    "font.size": 16,
-    "axes.labelsize": 16,
-    "xtick.labelsize": 12,
-    "ytick.labelsize": 12,
-    "legend.fontsize": 12
+    "font.size": 18,
+    "axes.labelsize": 18,
+    "xtick.labelsize": 14,
+    "ytick.labelsize": 14,
+    "legend.fontsize": 14
 })
 
 Acrobot = {'env_name' : 'Acrobot-v1','min' :-500, 'max' : -100}
@@ -27,10 +28,10 @@ def heatmap(env,cmap_v):
 
         df = df.sort_index(ascending=False)
         df.index = df.index.map(lambda x: f'{x:.1e}')
-        plt.figure(figsize=(8, 7))
+        plt.figure(figsize=(8.25, 7))
 
         plt.imshow(df, aspect='equal', vmin=env['min'], vmax=env['max'],cmap=cmap_v)
-        plt.colorbar(label="AUC")
+        plt.colorbar(label="AUC",fraction=0.046, pad=0.04, ticks = np.linspace(env['min'],env['max'],5))
 
         plt.xticks(range(len(df.columns)), df.columns, rotation=0)
         plt.yticks(range(len(df.index)), df.index)
