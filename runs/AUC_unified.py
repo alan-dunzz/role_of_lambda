@@ -1,93 +1,104 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import sys
 import numpy as np
+from matplotlib.ticker import MultipleLocator
 
-'''
-Plot Area Under the Curve (AUC) vs lambda for a given environment.
-Saves the plot as PNG and SVG files.
-Input:
-    - Command line argument 1: environment name (str)
-    - (Optional) Command line argument 2: percentage of timesteps to sum up to (float between 0 and 1)
-'''
+# 1. Configuration for Fonts (mimicking Computer Modern)
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["cmr10"],
+    "mathtext.fontset": "cm",  # Use Computer Modern for math (lambda)
+    "axes.unicode_minus": False,
+    "axes.formatter.use_mathtext":True,
+    "font.size": 20,
+    "axes.labelsize": 20,
+    "xtick.labelsize": 18,
+    "ytick.labelsize": 18,
+    "legend.fontsize": 18
+})
 
-# Recover env name from command line argument
-env_name = sys.argv[1]
+# Recover env name
+env_name = 'Acrobot-v1'
 
-# Load dataframe
-return_per_timestep_for_each_lambda = pd.read_csv(f'runs/analyzed_data/average_return_per_timestep_for_each_lambda_{env_name}.csv')
-convergence_info = pd.read_csv(f'runs/analyzed_data/convergence_info_{env_name}.csv')
+#Load data
+base_path = fr"C:\Users\aland\Desktop\University of Alberta\CMPUT 655 Reinforcement Learning\Project\code"
+convergence_info = pd.read_csv(fr"{base_path}\convergence_data_{env_name}.csv")
+early_learning_info = pd.read_csv(fr"{base_path}\early_learning_data_{env_name}.csv")
 
-# Retrieve data
-confidence_intervals = return_per_timestep_for_each_lambda.iloc[-1]
-return_per_timestep_for_each_lambda = return_per_timestep_for_each_lambda.iloc[:-1]
+#Initialize Figure
+fig, ax = plt.subplots(figsize=(10, 7), dpi=100)
 
-# Calculate AUC for each lambda
-# Check for a arg, if there is one, sum only up to that percentage of timesteps
-if len(sys.argv) > 2:
-    percentage_to_sum = sys.argv[2]
-    sum_up_to_idx = int(return_per_timestep_for_each_lambda.shape[0] * float(percentage_to_sum))
-    y = return_per_timestep_for_each_lambda.iloc[:sum_up_to_idx].mean(axis=0)
-else:
-    y = return_per_timestep_for_each_lambda.mean(axis=0)
+# Early learning data
+x_early = early_learning_info['lambda']
+y_early_mean = early_learning_info['early_learning_value_mean']
+y_early_lower = early_learning_info['early_learning_p5']
+y_early_upper = early_learning_info['early_learning_p95']
 
-# Plot AUC vs lambda
-x = np.array(return_per_timestep_for_each_lambda.columns, dtype=np.float32)
-fig = px.line(x=x, y=y)
+# Shaded Area (Tolerance Interval)
+ax.fill_between(x_early, y_early_lower, y_early_upper, 
+                color='#e8b37d', alpha=0.4, label='_nolegend_')
 
-# Add confidence intervals as shaded area
-lower_bound = y - confidence_intervals
-upper_bound = y + confidence_intervals
-fig.add_traces([
-    px.scatter(x=x, y=lower_bound).update_traces(mode='lines', line=dict(color='lightgrey'), showlegend=False).data[0],
-    px.scatter(x=x, y=upper_bound).update_traces(mode='lines', line=dict(color='lightgrey'), fill='tonexty', fillcolor='rgba(211,211,211,0.5)', showlegend=False).data[0]
-])
+# Mean Line
+ax.plot(x_early, y_early_mean, 
+        color='#e87d13', linewidth=4, label='Early learning')
 
-fig.update_layout(title=f'Area under the curve (AUC) in {env_name} (Average ± CI 95%)', xaxis_title='λ value', yaxis_title='Area Under the Curve (AUC)')
-fig.update_traces(line=dict(color='blue'))
-fig.update_layout(width=2000, height=800)
-fig.update_xaxes(dtick=0.1)
-
+# Convergence data
 x_conv = convergence_info['lambda']
-y_conv = convergence_info['convergence_value_mean']
-ci_conv = convergence_info['convergence_value_ci95']
+y_conv_mean = convergence_info['convergence_value_mean']
+y_conv_lower = convergence_info['convergence_p5']
+y_conv_upper = convergence_info['convergence_p95']
 
-# Calculate Bounds
-lower_conv = y_conv - ci_conv
-upper_conv = y_conv + ci_conv
+# Shaded Area (Tolerance Interval)
+ax.fill_between(x_conv, y_conv_lower, y_conv_upper, 
+                color='lightblue', alpha=0.4, label='_nolegend_')
 
-# Convergence Confidence Interval (Shading - Red/Grey)
-fig.add_traces([
-    # Lower Bound (used as a reference for filling)
-    px.scatter(x=x_conv, y=lower_conv).update_traces(mode='lines', line=dict(width=0), showlegend=False, hoverinfo='skip').data[0],
-    # Upper Bound (Fills down to the previous trace/lower bound)
-    px.scatter(x=x_conv, y=upper_bound).update_traces(mode='lines', line=dict(width=0), fill='tonexty', fillcolor='rgba(255, 0, 0, 0.1)', showlegend=False, hoverinfo='skip').data[0]
-])
+# Mean Line
+ax.plot(x_conv, y_conv_mean, 
+        color='#2456a6', linewidth=4, label='Convergence')
 
-# Main Convergence Line
-fig.add_trace(go.Scatter(
-    x=x_conv, 
-    y=y_conv, 
-    mode='lines', 
-    name='Convergence Value (Metric 2)',
-    line=dict(color='red', width=3) # Use a distinct color
-))
-fig.update_traces(line=dict(color='blue'))
-fig.update_layout(width=2000, height=800)
-fig.update_xaxes(dtick=0.1)
+# Title and Labels
+ax.set_title(f"{env_name}", pad=15)
+ax.set_xlabel(r"$\lambda$") # Using LaTeX for lambda
+ax.set_ylabel("AUC",rotation=0,ha='right')
 
-# Font size
-fig.update_layout(
-    title_font_size=30,
-    xaxis_title_font_size=25,
-    yaxis_title_font_size=25,
-    legend_font_size=20,
-    xaxis=dict(tickfont=dict(size=20)),
-    yaxis=dict(tickfont=dict(size=25))
+# Axis Ticks formatting
+ax.tick_params(axis='both', which='major', width=2, length=6)
+
+# Set grid
+ax.grid(True, color='lightgray', linestyle='-', linewidth=1, alpha=0.8)
+ax.set_axisbelow(True) # Ensure grid is behind the plot lines
+
+# Enforce specific tick intervals (dtick)
+ax.xaxis.set_major_locator(MultipleLocator(0.1)) 
+ax.yaxis.set_major_locator(MultipleLocator(50))  
+ax.set_xlim(0, 1)
+# Legend Customization
+legend = ax.legend(
+    fontsize=16, 
+    loc='upper left', 
+    bbox_to_anchor=(0.65, 0.18),
+    frameon=True,          
+    edgecolor='lightgray', 
+    facecolor='white',     
+    framealpha=0.8         
 )
 
-# Save plot
-fig.write_image(f'runs/analyzed_data/unified_AUC{env_name}.svg')
-fig.write_image(f'runs/analyzed_data/unified_AUC{env_name}.png')
+legend.get_frame().set_linewidth(1.5)
+
+for spine in ['bottom', 'left']:
+    ax.spines[spine].set_linewidth(1)
+    ax.spines[spine].set_color('black')
+
+# Hide the top and right spines
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+
+# Save files 
+output_png = fr"{base_path}\unified_AUC_vs_lambda_{env_name}.png"
+output_svg = fr"{base_path}\unified_AUC_vs_lambda_{env_name}.svg"
+
+plt.tight_layout() # Adjust layout to prevent clipping
+plt.savefig(output_png, dpi=100)
+plt.savefig(output_svg, format='svg')
+
+print("Plot generated successfully")
