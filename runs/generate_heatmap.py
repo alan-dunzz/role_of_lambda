@@ -6,11 +6,11 @@ plt.rcParams.update({
     "text.usetex": True,                     # use LaTeX to render text
     "font.family": "serif",
     "font.serif": ["Computer Modern Roman"], # Computer Modern (LaTeX default)
-    "font.size": 18,
-    "axes.labelsize": 18,
-    "xtick.labelsize": 14,
-    "ytick.labelsize": 14,
-    "legend.fontsize": 14
+    "font.size": 20,
+    "axes.labelsize": 20,
+    "xtick.labelsize": 18,
+    "ytick.labelsize": 18,
+    "legend.fontsize": 18
 })
 
 Acrobot = {'env_name' : 'Acrobot-v1','min' :-500, 'max' : -100}
@@ -44,7 +44,7 @@ def heatmap(env,cmap_v):
         plt.tight_layout()
 
         plt.savefig(fr"C:\Users\aland\Desktop\University of Alberta\CMPUT 655 Reinforcement Learning\Project\code\Heatmaps\AUC_anneal_{scheme}_{env['env_name']}_{cmap_v}.png") 
-        #plt.savefig(fr"C:\Users\aland\Desktop\University of Alberta\CMPUT 655 Reinforcement Learning\Project\code\Heatmaps\AUC_anneal_{lr_scheme}_{env_name}.svg") 
+        plt.savefig(fr"C:\Users\aland\Desktop\University of Alberta\CMPUT 655 Reinforcement Learning\Project\code\Heatmaps\AUC_anneal_{scheme}_{env['env_name']}.svg") 
         plt.close()
 
 # for cmap in ['viridis','grey','inferno']:
