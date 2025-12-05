@@ -3,9 +3,11 @@ import pandas as pd
 import numpy as np
 
 plt.rcParams.update({
-    "text.usetex": True,                     # use LaTeX to render text
     "font.family": "serif",
-    "font.serif": ["Computer Modern Roman"], # Computer Modern (LaTeX default)
+    "font.serif": ["cmr10"],
+    "mathtext.fontset": "cm",  # Use Computer Modern for math (lambda)
+    "axes.unicode_minus": False,
+    "axes.formatter.use_mathtext":True,
     "font.size": 20,
     "axes.labelsize": 20,
     "xtick.labelsize": 18,
@@ -28,7 +30,7 @@ def heatmap(env,cmap_v):
 
         df = df.sort_index(ascending=False)
         df.index = df.index.map(lambda x: f'{x:.1e}')
-        plt.figure(figsize=(8.25, 7))
+        plt.figure(figsize=(8.3, 7))
 
         plt.imshow(df, aspect='equal', vmin=env['min'], vmax=env['max'],cmap=cmap_v)
         plt.colorbar(label="AUC",fraction=0.046, pad=0.04, ticks = np.linspace(env['min'],env['max'],5))
@@ -39,7 +41,7 @@ def heatmap(env,cmap_v):
         plt.xlabel(r"$\lambda$",labelpad=10)
         plt.ylabel(r"$\alpha$",rotation=0,labelpad=10)
 
-        plt.title(fr"{env['env_name']}")
+        plt.title(fr"{env['env_name']}",pad = 15)
 
         plt.tight_layout()
 
