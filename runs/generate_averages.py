@@ -67,20 +67,20 @@ for lambda_folder in lambda_folders:
             percentage_to_average = sys.argv[2]
             last_n_steps = int(500_000 * float(percentage_to_average))
             convergence_value = interpolated_values[-last_n_steps:].mean()
-            # convergence_value = np.trapezoid(interpolated_values[-last_n_steps:]) / last_n_steps
+            # convergence_value = np.trapz(interpolated_values[-last_n_steps:]) / last_n_steps
         else:
             convergence_value = interpolated_values[-10_000:].mean()
-            # convergence_value = np.trapezoid(interpolated_values[-10_000:])/10_000
+            # convergence_value = np.trapz(interpolated_values[-10_000:])/10_000
         convergence_values.append(convergence_value)
 
         if len(sys.argv) > 3:
             percentage_to_average = sys.argv[3]
             first_n_steps = int(500_000 * float(percentage_to_average))
             early_learning_value = interpolated_values[:first_n_steps].mean()
-            # early_learning_value = np.trapezoid(interpolated_values[:first_n_steps]) / first_n_steps
+            # early_learning_value = np.trapz(interpolated_values[:first_n_steps]) / first_n_steps
         else:
             early_learning_value = interpolated_values[:125_000].mean()
-            # early_learning_value = np.trapezoid(interpolated_values[:125_000]) / 125_000
+            # early_learning_value = np.trapz(interpolated_values[:125_000]) / 125_000
         early_learning_values.append(early_learning_value)
     
     early_percentile_5,early_percentile_95 = np.percentile(early_learning_values,[5,95])
@@ -95,9 +95,9 @@ for lambda_folder in lambda_folders:
     print(f'Average for lambda={labas}: {averaged_interpolated_returns.mean()}')
 
     # Calculating convergence value over seeds and confidence interval
-    # Calculating Area under the average return curve using trapezoid method
+    # Calculating Area under the average return curve using trapz 
     # convergence_value_mean = np.array(convergence_values).mean()
-    convergence_value_mean = np.trapezoid(convergence_values)/len(convergence_values)
+    convergence_value_mean = np.trapz(convergence_values)/len(convergence_values)
     convergence_value_ci95 = 1.96 * (np.array(convergence_values).std() / np.sqrt(number_of_seeds))
     convergence_info = pd.concat([convergence_info, pd.DataFrame([[float(labas), convergence_value_mean, convergence_value_ci95,conv_percentile_5,conv_percentile_95]], columns=['lambda', 'convergence_value_mean', 'convergence_value_ci95','convergence_p5','convergence_p95'])], ignore_index=True)
 

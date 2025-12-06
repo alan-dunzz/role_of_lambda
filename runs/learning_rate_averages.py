@@ -70,14 +70,14 @@ for lambda_folder in lambda_folders:
                 avg_ret_per_t_for_each_lambda_lr_anneal_lr_True[f'{lambda_folder}{re.sub('learning_rate', 'lr', lr_folder)}'] = [*averaged_interpolated_returns]
                 #AUC_anneal_lr_True.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = averaged_interpolated_returns.mean()
                 #print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {averaged_interpolated_returns.mean()}")
-                AUC_anneal_lr_True.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = np.trapezoid(averaged_interpolated_returns)/len(averaged_interpolated_returns)
-                print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {np.trapezoid(averaged_interpolated_returns)/len(averaged_interpolated_returns)}")
+                AUC_anneal_lr_True.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = np.trapz(averaged_interpolated_returns)/len(averaged_interpolated_returns)
+                print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {np.trapz(averaged_interpolated_returns)/len(averaged_interpolated_returns)}")
             else:
                 avg_ret_per_t_for_each_lambda_lr_anneal_lr_False[f'{lambda_folder}{re.sub('learning_rate', 'lr', lr_folder)}'] = [*averaged_interpolated_returns]
                 #AUC_anneal_lr_False.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = averaged_interpolated_returns.mean()
                 #print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {averaged_interpolated_returns.mean()}")
-                AUC_anneal_lr_False.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = np.trapezoid(averaged_interpolated_returns)/len(averaged_interpolated_returns)
-                print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {p.trapezoid(averaged_interpolated_returns)/len(averaged_interpolated_returns)}")
+                AUC_anneal_lr_False.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = np.trapz(averaged_interpolated_returns)/len(averaged_interpolated_returns)
+                print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {np.trapz(averaged_interpolated_returns)/len(averaged_interpolated_returns)}")
 
 # Saving the final dataframe of average return per timestep for each lambda and lr
 analyzed_data_folder = 'runs/' + 'analyzed_data'
