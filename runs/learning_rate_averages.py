@@ -68,12 +68,16 @@ for lambda_folder in lambda_folders:
             # Storing the averaged returns for this lambda and lr
             if "True" in lr_scheme:
                 avg_ret_per_t_for_each_lambda_lr_anneal_lr_True[f'{lambda_folder}{re.sub('learning_rate', 'lr', lr_folder)}'] = [*averaged_interpolated_returns]
-                AUC_anneal_lr_True.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = averaged_interpolated_returns.mean()
-                print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {averaged_interpolated_returns.mean()}")
+                #AUC_anneal_lr_True.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = averaged_interpolated_returns.mean()
+                #print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {averaged_interpolated_returns.mean()}")
+                AUC_anneal_lr_True.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = np.trapezoid(averaged_interpolated_returns)/len(averaged_interpolated_returns)
+                print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {np.trapezoid(averaged_interpolated_returns)/len(averaged_interpolated_returns)}")
             else:
                 avg_ret_per_t_for_each_lambda_lr_anneal_lr_False[f'{lambda_folder}{re.sub('learning_rate', 'lr', lr_folder)}'] = [*averaged_interpolated_returns]
-                AUC_anneal_lr_False.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = averaged_interpolated_returns.mean()
-                print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {averaged_interpolated_returns.mean()}")
+                #AUC_anneal_lr_False.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = averaged_interpolated_returns.mean()
+                #print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {averaged_interpolated_returns.mean()}")
+                AUC_anneal_lr_False.loc[f'{re.sub('learning_rate', 'lr', lr_folder)}',f'{lambda_folder}'] = np.trapezoid(averaged_interpolated_returns)/len(averaged_interpolated_returns)
+                print(f"AUC {lambda_folder}, {lr_folder}, {lr_scheme} = {p.trapezoid(averaged_interpolated_returns)/len(averaged_interpolated_returns)}")
 
 # Saving the final dataframe of average return per timestep for each lambda and lr
 analyzed_data_folder = 'runs/' + 'analyzed_data'
@@ -81,5 +85,5 @@ analyzed_data_folder = Path(analyzed_data_folder)
 analyzed_data_folder.mkdir(exist_ok=True)
 avg_ret_per_t_for_each_lambda_lr_anneal_lr_True.to_csv(analyzed_data_folder / f'avg_ret_per_t_for_each_lambda_lr_anneal_True_{env_name}.csv', index=False)
 avg_ret_per_t_for_each_lambda_lr_anneal_lr_False.to_csv(analyzed_data_folder / f'avg_ret_per_t_for_each_lambda_lr_anneal_False_{env_name}.csv', index=False)
-AUC_anneal_lr_False.to_csv(analyzed_data_folder / f'AUC_anneal_lr_False_{env_name}.csv',index = True)
-AUC_anneal_lr_True.to_csv(analyzed_data_folder / f'AUC_anneal_lr_True_{env_name}.csv',index = True)
+AUC_anneal_lr_False.to_csv(analyzed_data_folder / f'AUC_anneal_lr_False_trapz_{env_name}.csv',index = True)
+AUC_anneal_lr_True.to_csv(analyzed_data_folder / f'AUC_anneal_lr_True_trapz_{env_name}.csv',index = True)

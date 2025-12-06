@@ -67,16 +67,20 @@ for lambda_folder in lambda_folders:
             percentage_to_average = sys.argv[2]
             last_n_steps = int(500_000 * float(percentage_to_average))
             convergence_value = interpolated_values[-last_n_steps:].mean()
+            # convergence_value = np.trapezoid(interpolated_values[-last_n_steps:]) / last_n_steps
         else:
             convergence_value = interpolated_values[-10_000:].mean()
+            # convergence_value = np.trapezoid(interpolated_values[-10_000:])/10_000
         convergence_values.append(convergence_value)
 
         if len(sys.argv) > 3:
             percentage_to_average = sys.argv[3]
             first_n_steps = int(500_000 * float(percentage_to_average))
             early_learning_value = interpolated_values[:first_n_steps].mean()
+            # early_learning_value = np.trapezoid(interpolated_values[:first_n_steps]) / first_n_steps
         else:
             early_learning_value = interpolated_values[:125_000].mean()
+            # early_learning_value = np.trapezoid(interpolated_values[:125_000]) / 125_000
         early_learning_values.append(early_learning_value)
     
     early_percentile_5,early_percentile_95 = np.percentile(early_learning_values,[5,95])
@@ -91,11 +95,14 @@ for lambda_folder in lambda_folders:
     print(f'Average for lambda={labas}: {averaged_interpolated_returns.mean()}')
 
     # Calculating convergence value over seeds and confidence interval
-    convergence_value_mean = np.array(convergence_values).mean()
+    # Calculating Area under the average return curve using trapezoid method
+    # convergence_value_mean = np.array(convergence_values).mean()
+    convergence_value_mean = np.trapezoid(convergence_values)/len(convergence_values)
     convergence_value_ci95 = 1.96 * (np.array(convergence_values).std() / np.sqrt(number_of_seeds))
     convergence_info = pd.concat([convergence_info, pd.DataFrame([[float(labas), convergence_value_mean, convergence_value_ci95,conv_percentile_5,conv_percentile_95]], columns=['lambda', 'convergence_value_mean', 'convergence_value_ci95','convergence_p5','convergence_p95'])], ignore_index=True)
 
-    early_learning_value_mean = np.array(early_learning_values).mean()
+    # early_learning_value_mean = np.array(early_learning_values).mean()
+    early_learning_value_mean = np.array(early_learning_value)/len(early_learning_value)
     early_learning_value_ci95 =  1.96 * (np.array(early_learning_values).std() / np.sqrt(number_of_seeds))  
     early_learning_info = pd.concat([early_learning_info, pd.DataFrame([[float(labas), early_learning_value_mean, early_learning_value_ci95,early_percentile_5,early_percentile_95]], columns=['lambda', 'early_learning_value_mean', 'early_learning_value_ci95','early_learning_p5','early_learning_p95'])], ignore_index=True)
 
@@ -106,5 +113,5 @@ analyzed_data_folder.mkdir(exist_ok=True)
 average_return_per_timestep_for_each_lambda.to_csv(analyzed_data_folder / f'average_return_per_timestep_for_each_lambda_{env_name}.csv', index=False)
 
 # Saving convergence info
-convergence_info.to_csv(analyzed_data_folder / f'convergence_info_{env_name}.csv', index=False)
-early_learning_info.to_csv(analyzed_data_folder / f'early_learning_info_{env_name}.csv', index = False)
+convergence_info.to_csv(analyzed_data_folder / f'convergence_info_trapz_{env_name}.csv', index=False)
+early_learning_info.to_csv(analyzed_data_folder / f'early_learning_info_trapz_{env_name}.csv', index = False)
