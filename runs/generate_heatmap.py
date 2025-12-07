@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import math
+import os
+
+current_directory = os.getcwd()
 
 plt.rcParams.update({
     "font.family": "serif",
@@ -16,7 +19,7 @@ plt.rcParams.update({
     "legend.fontsize": 18
 })
 
-base_path = fr"C:\Users\aland\Desktop\University of Alberta\CMPUT 655 Reinforcement Learning\Project\code\AUC_anneal_lr_"
+base_path = fr"{current_directory}/runs/analyzed_data/AUC_percentiles_difference_lr_"
 
 def sci_notation_formatter(x):
     if x == 0: return "0"
@@ -50,12 +53,12 @@ def heatmap(env,cmap_v):
         plt.xlabel(r"$\lambda$",labelpad=10)
         plt.ylabel(r"$\alpha$",rotation=0,labelpad=10)
 
-        plt.title(fr"{env['env_name']}",pad = 15)
+        plt.title(fr"{env}",pad = 15)
 
         plt.tight_layout()
 
-        plt.savefig(fr"C:\Users\aland\Desktop\University of Alberta\CMPUT 655 Reinforcement Learning\Project\code\Heatmaps\AUC_anneal_{scheme}_{env}_{cmap_v}.png") 
-        plt.savefig(fr"C:\Users\aland\Desktop\University of Alberta\CMPUT 655 Reinforcement Learning\Project\code\Heatmaps\AUC_anneal_{scheme}_{env}.svg") 
+        plt.savefig(fr"{current_directory}/runs/analyzed_data/AUC_percentiles_difference_{scheme}_{env}_{cmap_v}.png") 
+        plt.savefig(fr"{current_directory}/runs/analyzed_data/AUC_percentiles_difference_{scheme}_{env}_{cmap_v}.svg") 
         plt.close()
 
 for env in ['Acrobot-v1','CartPole-v1']:
