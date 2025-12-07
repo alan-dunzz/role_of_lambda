@@ -45,7 +45,7 @@ def heatmap(env,cmap_v):
         plt.figure(figsize=(8.3, 7))
 
         plt.imshow(df, aspect='equal', vmin=min_v, vmax=max_v,cmap=cmap_v)
-        plt.colorbar(label="AUC",fraction=0.046, pad=0.04, ticks = np.linspace(min_v,max_v,5, dtype=int))
+        plt.colorbar(label="5-95 percentiles",fraction=0.046, pad=0.04, ticks = np.linspace(min_v,max_v,5, dtype=int))
 
         plt.xticks(range(len(df.columns)), df.columns, rotation=0)
         plt.yticks(range(len(df.index)), df.index)
@@ -62,5 +62,5 @@ def heatmap(env,cmap_v):
         plt.close()
 
 for env in ['Acrobot-v1','CartPole-v1']:
-    heatmap(env,'GnBu')
+    heatmap(env,'GnBu_r')
 
