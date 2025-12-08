@@ -32,8 +32,12 @@ cmap = plt.cm.Blues
 colors = [cmap(i) for i in np.linspace(0.3, 0.9, len(lambdas))]
 window = 750  # rolling average
 
-# Create figure with 2 subplots side by side
-fig, axes = plt.subplots(1, 2, figsize=(20, 6), sharey=True)
+# Create figure with 2 subplots side by side, separate y-scales
+fig, axes = plt.subplots(1, 2, figsize=(20, 6), sharey=False)
+
+# Store handles/labels for a single legend
+handles_for_legend = []
+labels_for_legend = []
 
 for ax, (env_name, csv_path) in zip(axes, csv_paths.items()):
     # Load CSV
@@ -43,7 +47,11 @@ for ax, (env_name, csv_path) in zip(axes, csv_paths.items()):
     # Plot each λ
     for lam, color in zip(lambdas, colors):
         smoothed = df[lam].rolling(window=window, min_periods=1).mean()
-        ax.plot(df["timestep"], smoothed, label=rf"$\lambda = {lam}$", color=color, linewidth=2)
+        line, = ax.plot(df["timestep"], smoothed, color=color, linewidth=2)
+        # Save handles/labels for the legend only once (from first env)
+        if env_name == "CartPole-v1":
+            handles_for_legend.append(line)
+            labels_for_legend.append(rf"$\lambda = {lam}$")
 
     # Remove top/right spines
     ax.spines["top"].set_visible(False)
@@ -56,19 +64,22 @@ for ax, (env_name, csv_path) in zip(axes, csv_paths.items()):
     # Format x-axis as 25k, 50k, ...
     ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{int(x/1000)}k'))
 
-    # Legend from max → min λ
-    handles, labels = ax.get_legend_handles_labels()
-    ax.legend(handles[::-1], labels[::-1])
-
     # Grid
     ax.grid(True, alpha=0.3)
 
 # Y-label only on the left subplot
 axes[0].set_ylabel("Episodic Return")
 
+# Reverse the order of handles/labels so legend shows max → min λ
+handles_for_legend = handles_for_legend[::-1]
+labels_for_legend = labels_for_legend[::-1]
+
+# Single horizontal legend below both plots
+fig.legend(handles_for_legend, labels_for_legend, loc='lower center', ncol=len(lambdas), frameon=False, bbox_to_anchor=(0.5, -0.05))
+
 # Adjust spacing between subplots
-plt.tight_layout()
+plt.tight_layout(rect=[0, 0.05, 1, 1])  # leave space at bottom for legend
 
 # Save figure
-plt.savefig(fr"{current_directory}/runs/analyzed_data/learning_curves_two_envs.png", dpi=300, bbox_inches="tight")
+plt.savefig(fr"{current_directory}/runs/analyzed_data/learning_curves_two_envs_separate_scales.png", dpi=300, bbox_inches="tight")
 plt.show()
