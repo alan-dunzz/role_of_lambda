@@ -3,102 +3,124 @@ import pandas as pd
 import numpy as np
 from matplotlib.ticker import MultipleLocator
 
-# 1. Configuration for Fonts (mimicking Computer Modern)
+# 1. Configuration for Fonts
 plt.rcParams.update({
     "font.family": "serif",
-    "font.serif": ["cmr10"],
-    "mathtext.fontset": "cm",  # Use Computer Modern for math (lambda)
-    "axes.unicode_minus": False,
-    "axes.formatter.use_mathtext":True,
+    "font.serif": ["Times New Roman"],
+    "mathtext.fontset": "stix",
+    "axes.unicode_minus": True,
+    "axes.formatter.use_mathtext": True,
     "font.size": 20,
     "axes.labelsize": 20,
     "xtick.labelsize": 18,
     "ytick.labelsize": 18,
-    "legend.fontsize": 18
+    "legend.fontsize": 18,
+    "svg.fonttype":'none',
 })
 
-# Recover env name
-env_name = 'Acrobot-v1'
+# Environments to plot (Left -> Right)
+envs = ['Cartpole-v1', 'Acrobot-v1']
 
-#Load data
+# Base path (Update this if running on a different machine)
 base_path = fr"C:\Users\aland\Desktop\University of Alberta\CMPUT 655 Reinforcement Learning\Project\code"
-convergence_info = pd.read_csv(fr"{base_path}\convergence_data_{env_name}.csv")
-early_learning_info = pd.read_csv(fr"{base_path}\early_learning_data_{env_name}.csv")
 
-#Initialize Figure
-fig, ax = plt.subplots(figsize=(10, 7), dpi=100)
+# Initialize Figure with 2 subplots (1 row, 2 columns)
+# Increased width (18) to accommodate both plots side-by-side comfortably
+fig, axes = plt.subplots(1, 2, figsize=(18, 7), dpi=100)
 
-# Early learning data
-x_early = early_learning_info['lambda']
-y_early_mean = early_learning_info['early_learning_value_mean']
-y_early_lower = early_learning_info['early_learning_p5']
-y_early_upper = early_learning_info['early_learning_p95']
+# Lists to store handles/labels for the shared legend later
+lines = []
+labels = []
 
-# Shaded Area (Tolerance Interval)
-ax.fill_between(x_early, y_early_lower, y_early_upper, 
-                color='#e8b37d', alpha=0.4, label='_nolegend_')
+for i, env_name in enumerate(envs):
+    ax = axes[i] # Select the current axis
+    
+    # Load data
+    try:
+        convergence_info = pd.read_csv(fr"{base_path}\convergence_data_{env_name}.csv")
+        early_learning_info = pd.read_csv(fr"{base_path}\early_learning_data_{env_name}.csv")
+    except FileNotFoundError:
+        print(f"Files not found for {env_name}")
 
-# Mean Line
-ax.plot(x_early, y_early_mean, 
-        color='#e87d13', linewidth=4, label='Early learning')
+    # --- Early Learning Plotting ---
+    x_early = early_learning_info['lambda']
+    y_early_mean = early_learning_info['early_learning_value_mean']
+    
+    ax.fill_between(x_early, 
+                    early_learning_info['early_learning_p5'], 
+                    early_learning_info['early_learning_p95'], 
+                    color='#e8b37d', alpha=0.4, label='_nolegend_')
+    
+    l1, = ax.plot(x_early, y_early_mean, 
+            color='#e87d13', linewidth=4, label='Early learning')
 
-# Convergence data
-x_conv = convergence_info['lambda']
-y_conv_mean = convergence_info['convergence_value_mean']
-y_conv_lower = convergence_info['convergence_p5']
-y_conv_upper = convergence_info['convergence_p95']
+    # --- Convergence Plotting ---
+    x_conv = convergence_info['lambda']
+    y_conv_mean = convergence_info['convergence_value_mean']
+    
+    ax.fill_between(x_conv, 
+                    convergence_info['convergence_p5'], 
+                    convergence_info['convergence_p95'], 
+                    color='lightblue', alpha=0.4, label='_nolegend_')
+    
+    l2, = ax.plot(x_conv, y_conv_mean, 
+            color='#2456a6', linewidth=4, label='Final performance')
 
-# Shaded Area (Tolerance Interval)
-ax.fill_between(x_conv, y_conv_lower, y_conv_upper, 
-                color='lightblue', alpha=0.4, label='_nolegend_')
+    # Store handles for legend (only need to do this once)
+    if i == 0:
+        lines = [l1, l2]
+        labels = [l1.get_label(), l2.get_label()]
 
-# Mean Line
-ax.plot(x_conv, y_conv_mean, 
-        color='#2456a6', linewidth=4, label='Convergence')
+    # --- Styling ---
+    ax.set_title(f"{env_name}", pad=15)
+    ax.set_xlabel("λ")
+    ax.set_ylabel("AUC", rotation=0, ha='right')
 
-# Title and Labels
-ax.set_title(f"{env_name}", pad=15)
-ax.set_xlabel(r"$\lambda$") # Using LaTeX for lambda
-ax.set_ylabel("AUC",rotation=0,ha='right')
+    # Axis Ticks formatting
+    ax.tick_params(axis='both', which='major', width=2, length=6)
+    
+    # Grid
+    ax.grid(True, color='lightgray', linestyle='-', linewidth=1, alpha=0.8)
+    ax.set_axisbelow(True)
 
-# Axis Ticks formatting
-ax.tick_params(axis='both', which='major', width=2, length=6)
+    # Spines
+    for spine in ['bottom', 'left']:
+        ax.spines[spine].set_linewidth(1)
+        ax.spines[spine].set_color('black')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
 
-# Set grid
-ax.grid(True, color='lightgray', linestyle='-', linewidth=1, alpha=0.8)
-ax.set_axisbelow(True) # Ensure grid is behind the plot lines
+    # Limits and Locators
+    ax.xaxis.set_major_locator(MultipleLocator(0.1)) 
+    ax.yaxis.set_major_locator(MultipleLocator(100))  
+    ax.set_xlim(0, 1)
 
-# Enforce specific tick intervals (dtick)
-ax.xaxis.set_major_locator(MultipleLocator(0.1)) 
-ax.yaxis.set_major_locator(MultipleLocator(50))  
-ax.set_xlim(0, 1)
-# Legend Customization
-legend = ax.legend(
-    fontsize=16, 
-    loc='upper left', 
-    bbox_to_anchor=(0.65, 0.18),
-    frameon=True,          
-    edgecolor='lightgray', 
-    facecolor='white',     
-    framealpha=0.8         
+# --- Shared Legend Configuration ---
+# We place the legend on the Figure object, not the individual Axes
+legend = fig.legend(
+    lines, labels,
+    loc='lower center',      # Position
+    bbox_to_anchor=(0.5, 0), # Anchor point (center bottom)
+    ncol=2,                  # Horizontal layout
+    fontsize=18,
+    frameon=True,
+    edgecolor='lightgray',
+    facecolor='white',
+    framealpha=1
 )
-
 legend.get_frame().set_linewidth(1.5)
 
-for spine in ['bottom', 'left']:
-    ax.spines[spine].set_linewidth(1)
-    ax.spines[spine].set_color('black')
-
-# Hide the top and right spines
-ax.spines['top'].set_visible(False)
-ax.spines['right'].set_visible(False)
+# Adjust layout to prevent legend overlap and clipping
+# Increase 'bottom' so there is room for the legend
+plt.tight_layout()
+plt.subplots_adjust(bottom=0.2) 
 
 # Save files 
-output_png = fr"{base_path}\unified_AUC_vs_lambda_{env_name}.png"
-output_svg = fr"{base_path}\unified_AUC_vs_lambda_{env_name}.svg"
+output_png = fr"{base_path}\combined_AUC_vs_lambda.png"
+output_svg = fr"{base_path}\combined_AUC_vs_lambda.svg"
 
-plt.tight_layout() # Adjust layout to prevent clipping
 plt.savefig(output_png, dpi=100)
 plt.savefig(output_svg, format='svg')
 
-print("Plot generated successfully")
+#plt.show()
+print("Combined plot generated successfully")
