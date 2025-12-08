@@ -59,7 +59,8 @@ for ax, (env_name, csv_path) in zip(axes, csv_paths.items()):
 
     # Labels and title
     ax.set_xlabel("Timesteps")
-    ax.set_title(f"Learning Curves for {env_name}", pad=15)
+    ax.set_title(f"{env_name}", pad=15)
+    ax.set_xlim(left=0)
 
     # Format x-axis as 25k, 50k, ...
     ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{int(x/1000)}k'))
@@ -81,5 +82,6 @@ fig.legend(handles_for_legend, labels_for_legend, loc='lower center', ncol=len(l
 plt.tight_layout(rect=[0, 0.05, 1, 1])  # leave space at bottom for legend
 
 # Save figure
-plt.savefig(fr"{current_directory}/runs/analyzed_data/learning_curves_two_envs_separate_scales.png", dpi=300, bbox_inches="tight")
+plt.savefig(fr"{current_directory}/runs/analyzed_data/test_learning_curves.svg",
+            dpi=300, bbox_inches='tight', bbox_extra_artists=[fig.legend])
 plt.show()
