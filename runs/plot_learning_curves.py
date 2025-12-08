@@ -1,45 +1,74 @@
-import matplotlib.pyplot as plt
-import pandas as pd
-import plotly.express as px
-import sys
+import os
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 
-'''
-Plot learning curve for a couple different lambda values in a given environment.
-Saves the plot as PNG and SVG files.
-Input:
-    - Command line argument 1: environment name (str)
-'''
+# ---------------------------
+# Formatting for plot
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["Times New Roman"],
+    "mathtext.fontset": "stix",
+    "axes.unicode_minus": True,
+    "axes.formatter.use_mathtext": True,
+    "font.size": 20,
+    "axes.labelsize": 20,
+    "xtick.labelsize": 18,
+    "ytick.labelsize": 18,
+    "legend.fontsize": 18,
+    "svg.fonttype":'none',
+})
+# ---------------------------
 
-# Recover env name from command line argument
-env_name = sys.argv[1]
+current_directory = os.getcwd()
+csv_paths = {
+    "CartPole-v1": fr"{current_directory}/runs/analyzed_data/average_return_for_plotting_CartPole-v1.csv",
+    "Acrobot-v1": fr"{current_directory}/runs/analyzed_data/average_return_for_plotting_Acrobot-v1.csv"
+}
 
-# Load dataframe
-return_per_timestep_for_each_lambda = pd.read_csv(f'runs/analyzed_data/average_return_per_timestep_for_each_lambda_{env_name}.csv')
+lambdas = [0, 0.5, 0.9, 0.95, 0.99, 1]
+cmap = plt.cm.Blues
+colors = [cmap(i) for i in np.linspace(0.3, 0.9, len(lambdas))]
+window = 750  # rolling average
 
-# Retrieve data
-_ = return_per_timestep_for_each_lambda.iloc[-1]
-return_per_timestep_for_each_lambda = return_per_timestep_for_each_lambda.iloc[:-1]
+# Create figure with 2 subplots side by side
+fig, axes = plt.subplots(1, 2, figsize=(20, 6), sharey=True)
 
-# Lambdas to plot
-lambdas_to_plot = ['0.0', '0.5', '0.9', '0.95', '0.99', '1.0']
+for ax, (env_name, csv_path) in zip(axes, csv_paths.items()):
+    # Load CSV
+    df = pd.read_csv(csv_path, header=None)
+    df.columns = ["timestep", 0, 0.5, 0.9, 0.95, 0.99, 1]
 
-# Plot learning curves
-fig = px.line(title=f'Learning Curves for different λ in {env_name}', labels={'index': 'Timesteps', 'value': 'Episodic Return', 'variable': 'λ value'})
-for labas in lambdas_to_plot:
-    fig.add_scatter(x=return_per_timestep_for_each_lambda.index, y=return_per_timestep_for_each_lambda[labas], mode='lines', name=f'λ={labas}')
-fig.update_layout(width=2000, height=800)
-fig.update_xaxes(dtick=50_000)
-# x and y Axis titles
-fig.update_layout(xaxis_title='Timesteps', yaxis_title='Episodic Return')
-# Font size
-fig.update_layout(
-    title_font_size=30,
-    xaxis_title_font_size=25,
-    yaxis_title_font_size=25,
-    legend_font_size=20,
-    xaxis=dict(tickfont=dict(size=20)),
-    yaxis=dict(tickfont=dict(size=25))
-)   
-fig.write_image(f'runs/analyzed_data/Learning_curves_different_lambdas_{env_name}.png')
-fig.write_image(f'runs/analyzed_data/Learning_curves_different_lambdas_{env_name}.svg')
+    # Plot each λ
+    for lam, color in zip(lambdas, colors):
+        smoothed = df[lam].rolling(window=window, min_periods=1).mean()
+        ax.plot(df["timestep"], smoothed, label=rf"$\lambda = {lam}$", color=color, linewidth=2)
+
+    # Remove top/right spines
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    # Labels and title
+    ax.set_xlabel("Timesteps")
+    ax.set_title(f"Learning Curves for {env_name}", pad=15)
+
+    # Format x-axis as 25k, 50k, ...
+    ax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f'{int(x/1000)}k'))
+
+    # Legend from max → min λ
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles[::-1], labels[::-1])
+
+    # Grid
+    ax.grid(True, alpha=0.3)
+
+# Y-label only on the left subplot
+axes[0].set_ylabel("Episodic Return")
+
+# Adjust spacing between subplots
+plt.tight_layout()
+
+# Save figure
+plt.savefig(fr"{current_directory}/runs/analyzed_data/learning_curves_two_envs.png", dpi=300, bbox_inches="tight")
+plt.show()
