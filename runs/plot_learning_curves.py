@@ -1,4 +1,5 @@
 import os
+from matplotlib import lines
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -79,9 +80,26 @@ labels_for_legend = labels_for_legend[::-1]
 fig.legend(handles_for_legend, labels_for_legend, loc='lower center', ncol=len(lambdas), frameon=False, bbox_to_anchor=(0.5, -0.05))
 
 # Adjust spacing between subplots
-plt.tight_layout(rect=[0, 0.05, 1, 1])  # leave space at bottom for legend
+#plt.tight_layout(rect=[0, 0.05, 1, 1])  # leave space at bottom for legend
+
+legend = fig.legend(
+    handles_for_legend, labels_for_legend,
+    loc='lower center',      # Position
+    bbox_to_anchor=(0.5, 0), # Anchor point (center bottom)
+    ncol=2,                  # Horizontal layout
+    fontsize=18,
+    frameon=True,
+    edgecolor='lightgray',
+    facecolor='white',
+    framealpha=1
+)
+legend.get_frame().set_linewidth(1.5)
+
+# Adjust layout to prevent legend overlap and clipping
+# Increase 'bottom' so there is room for the legend
+plt.tight_layout()
+plt.subplots_adjust(bottom=0.2) 
 
 # Save figure
-plt.savefig(fr"{current_directory}/runs/analyzed_data/test_learning_curves.svg",
-            dpi=300, bbox_inches='tight', bbox_extra_artists=[fig.legend])
+plt.savefig(fr"{current_directory}/runs/analyzed_data/learning_curves_two_envs_separate_scales.png", dpi=300, bbox_inches="tight")
 plt.show()
